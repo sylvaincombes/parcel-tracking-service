@@ -1,0 +1,11 @@
+parcel-tracking:
+  webhooks:
+    secrets:
+      colisway: local-colisway-secret
+      parcelwave: local-parcelwave-secret
+  late-detection:
+    enabled: false
+
+logging:
+  level:
+    com.shoplane.parceltracking: DEBUG

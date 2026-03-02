@@ -1,0 +1,63 @@
+spring:
+  application:
+    name: parcel-tracking-service
+  threads:
+    virtual:
+      enabled: true
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/parcel_tracking}
+    username: ${DATABASE_USERNAME:parcel_tracking}
+    password: ${DATABASE_PASSWORD:parcel_tracking}
+    hikari:
+      maximum-pool-size: 20
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      acks: all
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      properties:
+        enable.idempotence: true
+  cache:
+    cache-names: carriers
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=10m
+  cloud:
+    openfeign:
+      client:
+        config:
+          carrier-registry:
+            connect-timeout: 500
+            read-timeout: 1500
+
+parcel-tracking:
+  carrier-registry:
+    url: ${CARRIER_REGISTRY_URL:http://localhost:8091}
+  outbox:
+    relay-interval: PT1S
+    topics:
+      parcel-events: shoplane.parcel-tracking.parcel-events.v1
+  late-detection:
+    cron: "0 15 * * * *"
+    grace-business-days: 1
+  webhooks:
+    secrets: {}
+  calendar:
+    public-holidays:
+      - 2026-01-01
+      - 2026-04-06
+      - 2026-05-01
+      - 2026-05-08
+      - 2026-05-14
+      - 2026-05-25
+      - 2026-07-14
+      - 2026-08-15
+      - 2026-11-01
+      - 2026-11-11
+      - 2026-12-25
