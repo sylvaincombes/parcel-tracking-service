@@ -1,0 +1,66 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2026-03-02-create-parcel-table
+      author: camille.arnaud
+      changes:
+        - createTable:
+            tableName: parcel
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tracking_number
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: uq_parcel_tracking_number
+              - column:
+                  name: carrier_code
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: seller_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: order_reference
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: delivered_at
+                  type: timestamptz
+              - column:
+                  name: registered_at
+                  type: timestamptz
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamptz
+                  constraints:
+                    nullable: false
+        - createIndex:
+            tableName: parcel
+            indexName: ix_parcel_seller_registered_at
+            columns:
+              - column:
+                  name: seller_id
+              - column:
+                  name: registered_at
+                  descending: true
+      rollback:
+        - dropTable:
+            tableName: parcel

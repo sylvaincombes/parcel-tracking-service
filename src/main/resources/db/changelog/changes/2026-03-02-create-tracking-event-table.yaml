@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2026-03-02-create-tracking-event-table
+      author: camille.arnaud
+      changes:
+        - createTable:
+            tableName: tracking_event
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: parcel_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_tracking_event_parcel
+                    references: parcel(id)
+              - column:
+                  name: type
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: occurred_at
+                  type: timestamptz
+                  constraints:
+                    nullable: false
+              - column:
+                  name: location
+                  type: varchar(255)
+              - column:
+                  name: received_at
+                  type: timestamptz
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropTable:
+            tableName: tracking_event
