@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/changes/2026-03-02-create-parcel-table.yaml
   - include:
       file: db/changelog/changes/2026-03-02-create-tracking-event-table.yaml
+  - include:
+      file: db/changelog/changes/2026-03-17-create-outbox-message-table.yaml

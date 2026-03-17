@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.shoplane.example/parcel-tracking/parcel-status-changed.v1.json",
+  "title": "parcel.status-changed",
+  "description": "Published on topic shoplane.parcel-tracking.parcel-events.v1 with header event-type=parcel.status-changed, keyed by parcelId.",
+  "type": "object",
+  "required": ["parcelId", "trackingNumber", "sellerId", "previousStatus", "currentStatus", "occurredAt"],
+  "properties": {
+    "parcelId": { "type": "string", "format": "uuid" },
+    "trackingNumber": { "type": "string", "pattern": "^[A-Z0-9]{8,30}$" },
+    "sellerId": { "type": "integer", "minimum": 1 },
+    "previousStatus": { "$ref": "#/$defs/status" },
+    "currentStatus": { "$ref": "#/$defs/status" },
+    "occurredAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "status": {
+      "enum": ["REGISTERED", "PICKED_UP", "IN_TRANSIT", "OUT_FOR_DELIVERY", "DELIVERY_FAILED", "DELIVERED", "RETURNED_TO_SENDER", "CANCELLED"]
+    }
+  }
+}
