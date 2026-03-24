@@ -1,0 +1,101 @@
+openapi: 3.0.3
+info:
+  title: Carrier Registry API
+  version: 2.1.0
+  description: |
+    Reference data about the carriers Shoplane sellers can ship with.
+    Owned by the Carrier Integrations team. Vendored here from the registry repository; do not edit by hand,
+    update it from the published contract when the client changes.
+servers:
+  - url: http://carrier-registry.carriers.svc.cluster.local:8080
+paths:
+  /v2/carriers/{code}:
+    get:
+      operationId: getCarrier
+      summary: Get a carrier by code
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/CarrierCode'
+      responses:
+        '200':
+          description: The carrier, active or retired. Retired carriers are never deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carrier'
+        '404':
+          description: No carrier was ever registered with this code.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /v2/carriers:
+    get:
+      operationId: listCarriers
+      summary: List carriers
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/CarrierStatus'
+      responses:
+        '200':
+          description: Carriers, ordered by code.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Carrier'
+components:
+  schemas:
+    CarrierCode:
+      type: string
+      pattern: '^[a-z][a-z0-9-]{1,31}$'
+      example: colisway
+    CarrierStatus:
+      type: string
+      enum: [ACTIVE, RETIRED]
+    TransitDays:
+      type: object
+      description: Business days between pick-up and delivery, excluding the pick-up day.
+      required: [min, max]
+      properties:
+        min:
+          type: integer
+          minimum: 0
+        max:
+          type: integer
+          minimum: 0
+    Carrier:
+      type: object
+      required: [code, displayName, trackingUrlTemplate, transitDays, status]
+      properties:
+        code:
+          $ref: '#/components/schemas/CarrierCode'
+        displayName:
+          type: string
+          minLength: 1
+          example: Colisway
+        trackingUrlTemplate:
+          type: string
+          description: Carrier tracking page. Always contains the `{trackingNumber}` placeholder.
+          example: https://track.colisway.example/parcels/{trackingNumber}
+        transitDays:
+          $ref: '#/components/schemas/TransitDays'
+        status:
+          $ref: '#/components/schemas/CarrierStatus'
+    Problem:
+      type: object
+      required: [title, status]
+      properties:
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
