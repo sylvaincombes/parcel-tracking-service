@@ -24,6 +24,7 @@ object ParcelEntityMapper {
             pickedUpOn = entity.pickedUpOn,
             deliveredAt = entity.deliveredAt,
             lateDetectedAt = entity.lateDetectedAt,
+            version = entity.version,
         )
 
     fun toNewEntity(parcel: Parcel, now: Instant): ParcelEntity =

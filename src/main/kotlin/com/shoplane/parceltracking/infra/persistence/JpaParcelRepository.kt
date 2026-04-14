@@ -7,6 +7,7 @@ import com.shoplane.parceltracking.domain.parcel.ParcelRepository
 import com.shoplane.parceltracking.domain.parcel.ParcelStatus
 import com.shoplane.parceltracking.domain.parcel.SellerId
 import com.shoplane.parceltracking.domain.parcel.TrackingNumber
+import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.stereotype.Repository
 import java.time.Clock
 import org.springframework.data.domain.PageRequest as SpringPageRequest
@@ -33,6 +34,9 @@ class JpaParcelRepository(
         val now = clock.instant()
         val existing = jpa.findById(parcel.id.value).orElse(null)
             ?: return ParcelEntityMapper.toDomain(jpa.saveAndFlush(ParcelEntityMapper.toNewEntity(parcel, now)))
+        if (existing.version != parcel.version) {
+            throw ObjectOptimisticLockingFailureException(ParcelEntity::class.java, parcel.id.value)
+        }
         ParcelEntityMapper.applyChanges(existing, parcel, now)
         return ParcelEntityMapper.toDomain(jpa.saveAndFlush(existing))
     }

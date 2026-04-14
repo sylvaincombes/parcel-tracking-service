@@ -10,6 +10,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
+import jakarta.persistence.Version
 import java.time.Instant
 import java.time.LocalDate
 import java.util.UUID
@@ -42,6 +43,9 @@ class ParcelEntity(
     val registeredAt: Instant,
     @Column(name = "updated_at", nullable = false)
     var updatedAt: Instant,
+    @Version
+    @Column(name = "version", nullable = false)
+    var version: Long? = null,
 ) {
     @OneToMany(mappedBy = "parcel", cascade = [CascadeType.ALL], orphanRemoval = true)
     @OrderBy("id")

@@ -6,6 +6,7 @@ import com.shoplane.parceltracking.domain.parcel.ParcelId
 import com.shoplane.parceltracking.domain.parcel.ParcelRepository
 import com.shoplane.parceltracking.domain.parcel.SellerId
 import com.shoplane.parceltracking.domain.parcel.TrackingNumber
+import org.springframework.orm.ObjectOptimisticLockingFailureException
 
 class InMemoryParcelRepository(vararg initial: Parcel) : ParcelRepository {
     private val parcels = linkedMapOf<ParcelId, Parcel>()
@@ -39,6 +40,10 @@ class InMemoryParcelRepository(vararg initial: Parcel) : ParcelRepository {
             .map(::copyOf)
 
     override fun save(parcel: Parcel): Parcel {
+        val stored = parcels[parcel.id]
+        if (stored != null && stored.version != parcel.version) {
+            throw ObjectOptimisticLockingFailureException(Parcel::class.java, parcel.id.value)
+        }
         val next = copyOf(parcel, version = (parcel.version ?: -1) + 1)
         parcels[parcel.id] = next
         return copyOf(next)

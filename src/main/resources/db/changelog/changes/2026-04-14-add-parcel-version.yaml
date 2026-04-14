@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2026-04-14-add-parcel-version
+      author: jonas.weber
+      changes:
+        - addColumn:
+            tableName: parcel
+            columns:
+              - column:
+                  name: version
+                  type: bigint
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropColumn:
+            tableName: parcel
+            columnName: version
