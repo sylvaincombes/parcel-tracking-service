@@ -1,6 +1,7 @@
 package com.shoplane.parceltracking.presentation.backoffice
 
 import com.shoplane.parceltracking.application.BackOfficeParcelQueries
+import com.shoplane.parceltracking.application.CancelParcelUseCase
 import com.shoplane.parceltracking.application.RegisterParcel
 import com.shoplane.parceltracking.application.RegisterParcelUseCase
 import com.shoplane.parceltracking.application.access.BackOfficeActor
@@ -27,6 +28,7 @@ import java.util.UUID
 class BackOfficeParcelController(
     private val queries: BackOfficeParcelQueries,
     private val registerParcel: RegisterParcelUseCase,
+    private val cancelParcel: CancelParcelUseCase,
 ) {
     @GetMapping
     fun list(
@@ -52,4 +54,8 @@ class BackOfficeParcelController(
         )
         return ParcelDetailResponse.from(registerParcel.register(actor, command))
     }
+
+    @PostMapping("/{parcelId}/cancel")
+    fun cancel(actor: BackOfficeActor, @PathVariable parcelId: UUID): ParcelDetailResponse =
+        ParcelDetailResponse.from(cancelParcel.cancel(actor, ParcelId(parcelId)))
 }
