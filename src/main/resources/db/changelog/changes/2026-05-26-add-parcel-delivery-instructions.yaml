@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2026-05-26-add-parcel-delivery-instructions
+      author: priya.raman
+      changes:
+        - addColumn:
+            tableName: parcel
+            columns:
+              - column:
+                  name: delivery_instructions
+                  type: varchar(500)
+      rollback:
+        - dropColumn:
+            tableName: parcel
+            columnName: delivery_instructions
