@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Carrier Registry API
-  version: 2.1.0
+  version: 2.3.0
   description: |
     Reference data about the carriers Shoplane sellers can ship with.
     Owned by the Carrier Integrations team. Vendored here from the registry repository; do not edit by hand,
@@ -71,7 +71,7 @@ components:
         max:
           type: integer
           minimum: 0
-    Carrier:
+    CarrierBase:
       type: object
       required: [code, displayName, trackingUrlTemplate, transitDays, status]
       properties:
@@ -89,6 +89,44 @@ components:
           $ref: '#/components/schemas/TransitDays'
         status:
           $ref: '#/components/schemas/CarrierStatus'
+    ActiveCarrier:
+      allOf:
+        - $ref: '#/components/schemas/CarrierBase'
+        - type: object
+          properties:
+            status:
+              type: string
+              enum: [ACTIVE]
+    RetiredCarrier:
+      allOf:
+        - $ref: '#/components/schemas/CarrierBase'
+        - type: object
+          required: [retiredOn, replacedBy]
+          properties:
+            status:
+              type: string
+              enum: [RETIRED]
+            retiredOn:
+              type: string
+              format: date
+              nullable: false
+            replacedBy:
+              allOf:
+                - $ref: '#/components/schemas/CarrierCode'
+              nullable: false
+              description: |
+                Code of the carrier that took over the parcels and tracking of the retired carrier.
+                Always present on a retired carrier and always points to an ACTIVE carrier: when a replacement
+                retires in turn, the registry re-points every carrier it replaced to the new replacement.
+    Carrier:
+      oneOf:
+        - $ref: '#/components/schemas/ActiveCarrier'
+        - $ref: '#/components/schemas/RetiredCarrier'
+      discriminator:
+        propertyName: status
+        mapping:
+          ACTIVE: '#/components/schemas/ActiveCarrier'
+          RETIRED: '#/components/schemas/RetiredCarrier'
     Problem:
       type: object
       required: [title, status]

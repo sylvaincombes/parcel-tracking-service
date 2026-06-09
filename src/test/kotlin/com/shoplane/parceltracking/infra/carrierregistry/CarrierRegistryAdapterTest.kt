@@ -28,6 +28,24 @@ class CarrierRegistryAdapterTest {
     }
 
     @Test
+    fun `maps a retired carrier with its replacement`() {
+        every { client.getCarrier("parcelwave") } returns CarrierDto(
+            code = "parcelwave",
+            displayName = "ParcelWave",
+            trackingUrlTemplate = "https://parcelwave.example/t/{trackingNumber}",
+            transitDays = TransitDaysDto(2, 4),
+            status = CarrierStatusDto.RETIRED,
+            retiredOn = "2026-09-30",
+            replacedBy = "colisway",
+        )
+
+        val carrier = adapter.findCarrier(CarrierCode("parcelwave"))
+
+        assertThat(carrier?.status).isEqualTo(CarrierStatus.RETIRED)
+        assertThat(carrier?.replacedBy).isEqualTo(CarrierCode("colisway"))
+    }
+
+    @Test
     fun `a carrier unknown to the registry is absent`() {
         every { client.getCarrier("speedyship") } throws notFound()
 

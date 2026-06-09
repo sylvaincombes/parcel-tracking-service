@@ -34,6 +34,7 @@ class CarrierRegistryAdapter(
                     CarrierStatusDto.ACTIVE -> CarrierStatus.ACTIVE
                     CarrierStatusDto.RETIRED -> CarrierStatus.RETIRED
                 },
+                replacedBy = dto.replacedBy?.let(::CarrierCode),
             )
     }
 }

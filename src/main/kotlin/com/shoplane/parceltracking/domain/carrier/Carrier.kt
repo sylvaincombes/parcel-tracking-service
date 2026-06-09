@@ -30,6 +30,7 @@ data class Carrier(
     val trackingUrlTemplate: String,
     val transitDays: TransitDays,
     val status: CarrierStatus,
+    val replacedBy: CarrierCode? = null,
 ) {
     val isActive: Boolean
         get() = status == CarrierStatus.ACTIVE

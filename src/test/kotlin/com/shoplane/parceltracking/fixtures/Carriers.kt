@@ -13,10 +13,12 @@ fun aCarrier(
     displayName: String = "Colisway",
     transitDays: TransitDays = TransitDays(min = 1, max = 2),
     status: CarrierStatus = CarrierStatus.ACTIVE,
+    replacedBy: CarrierCode? = null,
 ) = Carrier(
     code = code,
     displayName = displayName,
     trackingUrlTemplate = "https://track.${code.value}.example/parcels/{trackingNumber}",
     transitDays = transitDays,
     status = status,
+    replacedBy = replacedBy,
 )

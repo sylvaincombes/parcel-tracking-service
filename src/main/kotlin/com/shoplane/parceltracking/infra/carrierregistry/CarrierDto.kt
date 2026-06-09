@@ -6,6 +6,8 @@ data class CarrierDto(
     val trackingUrlTemplate: String,
     val transitDays: TransitDaysDto,
     val status: CarrierStatusDto,
+    val retiredOn: String? = null,
+    val replacedBy: String? = null,
 )
 
 data class TransitDaysDto(

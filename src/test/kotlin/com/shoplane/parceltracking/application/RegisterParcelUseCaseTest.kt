@@ -27,7 +27,7 @@ class RegisterParcelUseCaseTest {
     private val parcels = InMemoryParcelRepository()
     private val carriers = StubCarrierDirectory(
         aCarrier(code = COLISWAY),
-        aCarrier(code = PARCELWAVE, status = CarrierStatus.RETIRED),
+        aCarrier(code = PARCELWAVE, status = CarrierStatus.RETIRED, replacedBy = COLISWAY),
     )
     private val useCase = RegisterParcelUseCase(parcels, carriers, fixedClockAt("2026-11-02T08:30:00Z"))
 
