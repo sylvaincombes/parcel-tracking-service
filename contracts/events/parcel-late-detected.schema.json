@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.shoplane.example/parcel-tracking/parcel-late-detected.v1.json",
+  "title": "parcel.late-detected",
+  "description": "Published once per parcel when it is still in flight after its delivery deadline (carrier max transit days plus the grace period, in business days after pick-up). customer-care opens a goodwill voucher for the customer on reception.",
+  "type": "object",
+  "required": ["parcelId", "trackingNumber", "sellerId", "deliveryDeadline", "occurredAt"],
+  "properties": {
+    "parcelId": { "type": "string", "format": "uuid" },
+    "trackingNumber": { "type": "string", "pattern": "^[A-Z0-9]{8,30}$" },
+    "sellerId": { "type": "integer", "minimum": 1 },
+    "deliveryDeadline": { "type": "string", "format": "date" },
+    "occurredAt": { "type": "string", "format": "date-time" }
+  }
+}
