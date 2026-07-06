@@ -1,0 +1,36 @@
+service: parcel-tracking-service
+upstream: http://parcel-tracking-service.tracking.svc.cluster.local:8080
+routes:
+  - id: public-tracking-by-number
+    methods: [GET]
+    path: ^/public/v1/tracking/[^/]+$
+    auth: none
+    rateLimit:
+      requestsPerMinute: 120
+      key: client-ip
+
+  - id: carrier-webhook-events
+    methods: [POST]
+    path: ^/webhooks/v1/carriers/[^/]+/events$
+    auth: none
+    maxBodyBytes: 65536
+
+  - id: backoffice-parcel-list
+    methods: [GET]
+    path: ^/back-office/v1/parcels$
+    auth: backoffice-session
+
+  - id: backoffice-parcel-register
+    methods: [POST]
+    path: ^/back-office/v1/parcels$
+    auth: backoffice-session
+
+  - id: backoffice-parcel-detail
+    methods: [GET]
+    path: ^/back-office/v1/parcels/[^/]+$
+    auth: backoffice-session
+
+  - id: backoffice-parcel-cancel
+    methods: [POST]
+    path: ^/back-office/v1/parcels/[^/]+/cancel$
+    auth: backoffice-session
