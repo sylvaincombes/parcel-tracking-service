@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2026-07-20-index-tracking-event-parcel-occurred-at
+      author: tomas.ortega
+      runInTransaction: false
+      changes:
+        - sql:
+            sql: CREATE INDEX CONCURRENTLY IF NOT EXISTS ix_tracking_event_parcel_occurred_at ON tracking_event (parcel_id, occurred_at)
+      rollback:
+        - sql:
+            sql: DROP INDEX CONCURRENTLY IF EXISTS ix_tracking_event_parcel_occurred_at

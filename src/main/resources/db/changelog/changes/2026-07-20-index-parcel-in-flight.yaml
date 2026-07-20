@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2026-07-20-index-parcel-in-flight
+      author: tomas.ortega
+      runInTransaction: false
+      changes:
+        - sql:
+            sql: >-
+              CREATE INDEX CONCURRENTLY IF NOT EXISTS ix_parcel_in_flight ON parcel (id)
+              WHERE picked_up_on IS NOT NULL AND late_detected_at IS NULL
+              AND status NOT IN ('DELIVERED', 'RETURNED_TO_SENDER', 'CANCELLED')
+      rollback:
+        - sql:
+            sql: DROP INDEX CONCURRENTLY IF EXISTS ix_parcel_in_flight
