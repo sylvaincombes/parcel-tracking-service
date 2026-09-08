@@ -8,5 +8,6 @@
 | [0004](0004-back-office-ownership-checks.md) | Back-office ownership checks live in the service | Accepted |
 | [0005](0005-contract-first-upstream-integrations.md) | Contract-first upstream integrations | Accepted |
 | [0006](0006-gateway-routes-are-coarse-filters.md) | Gateway routes are coarse filters | Accepted |
+| [0007](0007-keyword-based-delivery-attempt-classification.md) | Keyword-based delivery attempt classification | Accepted |
 
 New ADRs use the next free number and the same sections: Context, Decision, Consequences.

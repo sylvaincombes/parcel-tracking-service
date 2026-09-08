@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2026-09-07-add-tracking-event-attempt-reason
+      author: lea.fontaine
+      changes:
+        - addColumn:
+            tableName: tracking_event
+            columns:
+              - column:
+                  name: attempt_reason
+                  type: varchar(32)
+      rollback:
+        - dropColumn:
+            tableName: tracking_event
+            columnName: attempt_reason

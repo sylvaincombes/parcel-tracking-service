@@ -53,6 +53,8 @@ and `auth`. Parameter validation belongs to the service.
 
 - JUnit 5, AssertJ, MockK for third-party types only; our own ports use the fakes in `src/test/.../fixtures`.
 - Test names are sentences describing behavior (`` `a delivered parcel is never late` ``).
+- `DeliveryAttemptClassifierTest.KnownLimitations` pins accepted gaps of the classifier (ADR 0007). Those assertions
+  describe current, accepted behavior; do not "fix" them without a product decision.
 
 ## Commits and merge requests
 
