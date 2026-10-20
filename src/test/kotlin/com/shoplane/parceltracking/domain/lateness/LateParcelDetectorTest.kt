@@ -44,4 +44,13 @@ class LateParcelDetectorTest {
 
         assertThat(detector.isLate(parcel, carrier, LocalDate.parse("2026-11-30"))).isFalse()
     }
+
+    @Test
+    fun `a parcel already flagged late is not reported twice`() {
+        val parcel = aPickedUpParcel(pickedUpAt = "2026-11-02T14:00:00Z").apply {
+            markLate(Instant.parse("2026-11-09T15:00:00Z"))
+        }
+
+        assertThat(detector.isLate(parcel, carrier, LocalDate.parse("2026-11-30"))).isFalse()
+    }
 }

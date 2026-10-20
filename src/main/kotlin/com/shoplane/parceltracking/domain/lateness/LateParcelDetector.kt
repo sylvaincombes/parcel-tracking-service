@@ -18,7 +18,7 @@ class LateParcelDetector(
 
     fun isLate(parcel: Parcel, carrier: Carrier, today: LocalDate): Boolean {
         val pickedUpOn = parcel.pickedUpOn ?: return false
-        if (parcel.status.isTerminal) {
+        if (parcel.status.isTerminal || parcel.isLate) {
             return false
         }
         return today.isAfter(deliveryDeadline(pickedUpOn, carrier))
