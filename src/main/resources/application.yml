@@ -36,6 +36,12 @@ spring:
             connect-timeout: 500
             read-timeout: 1500
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+
 parcel-tracking:
   carrier-registry:
     url: ${CARRIER_REGISTRY_URL:http://localhost:8091}
