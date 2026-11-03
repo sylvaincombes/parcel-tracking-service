@@ -19,6 +19,14 @@ set to your handle.
   with a new changeset.
 - Every changeset has an explicit `rollback` block that undoes exactly what the changeset does.
 
+## Compatibility with the running version
+
+Changesets run while the previous version still serves traffic, and a rollback of the application does not roll the
+schema back. Every changeset must work with both the previous and the new code:
+
+- Never rename or drop a column or table that the previous version reads or writes. Expand, then contract: add the new
+  column, release code that writes both and reads the new one, backfill, and drop the old column in a later release.
+
 ## Table sizes (production, November 2026)
 
 | Table | Rows | Growth | Notes |
