@@ -13,6 +13,14 @@ never repositories.
 - `./gradlew build`: compile and run all tests.
 - `./gradlew test --tests '*ParcelTest'`: a single test class.
 - `docker compose up -d` then `./gradlew bootRun --args='--spring.profiles.active=local'`.
+- `cd backoffice-widget && npm test`: back-office widget tests (Node 24+).
+
+## Back-office widget
+
+`backoffice-widget/` is the TypeScript view of the back-office API (`/back-office/v1/**`) embedded in the seller back
+office. Its types in `src/api.ts` mirror the JSON of the controllers. New fields are ignored until the widget uses
+them; renaming or removing a field, or changing an enum value or a limit, needs the widget change in the same merge
+request.
 
 ## Parcel lifecycle
 

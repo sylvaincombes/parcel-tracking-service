@@ -42,6 +42,17 @@ Unit tests only, no Docker needed. Use cases are tested with the in-memory fakes
 
 Gateway routes for these paths are declared in `deploy/gateway/routes.yaml`.
 
+## Back-office widget
+
+`backoffice-widget/` holds the parcel list and timeline that the seller back office embeds. It reads the back-office
+API above with the seller's session and ships from this repository so that API and widget change together.
+
+```bash
+cd backoffice-widget && npm test
+```
+
+TypeScript, no runtime dependencies, tests with the Node test runner (Node 24 or later).
+
 ## Documentation
 
 - `AGENTS.md`: conventions for anyone (human or tool) changing this repository.

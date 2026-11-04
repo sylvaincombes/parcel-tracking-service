@@ -1,0 +1,13 @@
+{
+  "name": "@shoplane/parcel-backoffice-widget",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Parcel list and timeline embedded in the seller back office",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "test": "node --test \"test/**/*.test.ts\""
+  }
+}
