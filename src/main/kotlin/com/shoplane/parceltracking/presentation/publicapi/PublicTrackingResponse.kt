@@ -11,6 +11,7 @@ data class PublicTrackingResponse(
     val carrierTrackingUrl: String?,
     val estimatedDelivery: EstimatedDeliveryResponse?,
     val deliveredAt: Instant?,
+    val deliveryInstructions: String?,
     val events: List<PublicTrackingEventResponse>,
 ) {
     companion object {
@@ -23,6 +24,7 @@ data class PublicTrackingResponse(
                 carrierTrackingUrl = tracking.carrierTrackingLink?.toString(),
                 estimatedDelivery = tracking.estimate?.let { EstimatedDeliveryResponse(it.earliest, it.latest) },
                 deliveredAt = parcel.deliveredAt,
+                deliveryInstructions = parcel.deliveryInstructions,
                 events = parcel.timeline().reversed().map {
                     PublicTrackingEventResponse(type = it.type.name, occurredAt = it.occurredAt, location = it.location)
                 },
