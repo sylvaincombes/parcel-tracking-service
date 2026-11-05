@@ -11,7 +11,7 @@ class Parcel(
     val trackingNumber: TrackingNumber,
     val carrierCode: CarrierCode,
     val sellerId: SellerId,
-    val orderReference: OrderReference,
+    orderReference: OrderReference,
     val registeredAt: Instant,
     status: ParcelStatus = ParcelStatus.REGISTERED,
     deliveryInstructions: String? = null,
@@ -22,6 +22,9 @@ class Parcel(
     val version: Long? = null,
 ) {
     var status: ParcelStatus = status
+        private set
+
+    var orderReference: OrderReference = orderReference
         private set
 
     var deliveryInstructions: String? = deliveryInstructions
@@ -66,6 +69,10 @@ class Parcel(
             throw IllegalStatusTransitionException(id, status, ParcelStatus.CANCELLED)
         }
         return requireNotNull(moveTo(ParcelStatus.CANCELLED, now))
+    }
+
+    fun changeOrderReference(orderReference: OrderReference) {
+        this.orderReference = orderReference
     }
 
     fun markLate(now: Instant) {

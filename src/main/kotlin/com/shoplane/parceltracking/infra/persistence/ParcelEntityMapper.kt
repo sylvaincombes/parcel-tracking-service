@@ -44,6 +44,7 @@ object ParcelEntityMapper {
         ).also { appendNewEvents(it, parcel, now) }
 
     fun applyChanges(entity: ParcelEntity, parcel: Parcel, now: Instant) {
+        entity.orderReference = parcel.orderReference.value
         entity.status = parcel.status
         entity.deliveryInstructions = parcel.deliveryInstructions
         entity.pickedUpOn = parcel.pickedUpOn

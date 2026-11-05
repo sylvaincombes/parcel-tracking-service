@@ -26,8 +26,8 @@ class ParcelEntity(
     val carrierCode: String,
     @Column(name = "seller_id", nullable = false, updatable = false)
     val sellerId: Long,
-    @Column(name = "order_reference", nullable = false, updatable = false)
-    val orderReference: String,
+    @Column(name = "order_reference", nullable = false)
+    var orderReference: String,
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     var status: ParcelStatus,
