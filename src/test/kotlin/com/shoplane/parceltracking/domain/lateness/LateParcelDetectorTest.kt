@@ -2,11 +2,10 @@ package com.shoplane.parceltracking.domain.lateness
 
 import com.shoplane.parceltracking.domain.calendar.BusinessCalendar
 import com.shoplane.parceltracking.domain.carrier.TransitDays
-import com.shoplane.parceltracking.domain.parcel.TrackingEventType
+import com.shoplane.parceltracking.fixtures.TrackingEvents
 import com.shoplane.parceltracking.fixtures.aCarrier
 import com.shoplane.parceltracking.fixtures.aPickedUpParcel
 import com.shoplane.parceltracking.fixtures.aRegisteredParcel
-import com.shoplane.parceltracking.fixtures.event
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.Instant
@@ -38,8 +37,8 @@ class LateParcelDetectorTest {
     @Test
     fun `a delivered parcel is never late`() {
         val parcel = aPickedUpParcel(pickedUpAt = "2026-11-02T14:00:00Z").apply {
-            record(event(TrackingEventType.OUT_FOR_DELIVERY, "2026-11-12T06:00:00Z"), Instant.parse("2026-11-12T06:00:00Z"))
-            record(event(TrackingEventType.DELIVERED, "2026-11-12T10:00:00Z"), Instant.parse("2026-11-12T10:00:00Z"))
+            record(TrackingEvents.outForDelivery("2026-11-12T06:00:00Z"), Instant.parse("2026-11-12T06:00:00Z"))
+            record(TrackingEvents.delivered("2026-11-12T10:00:00Z"), Instant.parse("2026-11-12T10:00:00Z"))
         }
 
         assertThat(detector.isLate(parcel, carrier, LocalDate.parse("2026-11-30"))).isFalse()

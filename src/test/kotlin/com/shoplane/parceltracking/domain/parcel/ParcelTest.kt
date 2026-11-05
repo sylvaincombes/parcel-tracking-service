@@ -1,9 +1,9 @@
 package com.shoplane.parceltracking.domain.parcel
 
 import com.shoplane.parceltracking.domain.carrier.CarrierCode
+import com.shoplane.parceltracking.fixtures.TrackingEvents
 import com.shoplane.parceltracking.fixtures.aPickedUpParcel
 import com.shoplane.parceltracking.fixtures.aRegisteredParcel
-import com.shoplane.parceltracking.fixtures.event
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatIllegalStateException
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -33,7 +33,7 @@ class ParcelTest {
     fun `pick-up records the pick-up day and reports the status change`() {
         val parcel = aRegisteredParcel()
 
-        val change = parcel.record(event(TrackingEventType.PICKED_UP, "2026-11-02T14:00:00Z"), now)
+        val change = parcel.record(TrackingEvents.pickedUp("2026-11-02T14:00:00Z"), now)
 
         assertThat(parcel.pickedUpOn).isEqualTo(LocalDate.parse("2026-11-02"))
         assertThat(change?.previousStatus).isEqualTo(ParcelStatus.REGISTERED)
@@ -43,9 +43,9 @@ class ParcelTest {
     @Test
     fun `delivery stores the carrier delivery time`() {
         val parcel = aPickedUpParcel()
-        parcel.record(event(TrackingEventType.OUT_FOR_DELIVERY, "2026-11-04T06:10:00Z"), now)
+        parcel.record(TrackingEvents.outForDelivery("2026-11-04T06:10:00Z"), now)
 
-        parcel.record(event(TrackingEventType.DELIVERED, "2026-11-04T11:42:00Z"), now)
+        parcel.record(TrackingEvents.delivered("2026-11-04T11:42:00Z"), now)
 
         assertThat(parcel.status).isEqualTo(ParcelStatus.DELIVERED)
         assertThat(parcel.deliveredAt).isEqualTo(Instant.parse("2026-11-04T11:42:00Z"))
@@ -54,9 +54,9 @@ class ParcelTest {
     @Test
     fun `another hub scan keeps the parcel in transit without reporting a status change`() {
         val parcel = aPickedUpParcel()
-        parcel.record(event(TrackingEventType.IN_TRANSIT, "2026-11-03T02:00:00Z"), now)
+        parcel.record(TrackingEvents.inTransit("2026-11-03T02:00:00Z"), now)
 
-        val change = parcel.record(event(TrackingEventType.ARRIVED_AT_HUB, "2026-11-03T09:00:00Z", "Marseille hub"), now)
+        val change = parcel.record(TrackingEvents.arrivedAtHub("2026-11-03T09:00:00Z", location = "Marseille hub"), now)
 
         assertThat(change).isNull()
         assertThat(parcel.events).hasSize(3)
@@ -65,10 +65,10 @@ class ParcelTest {
     @Test
     fun `rejects an event that would reopen a delivered parcel`() {
         val parcel = aPickedUpParcel()
-        parcel.record(event(TrackingEventType.OUT_FOR_DELIVERY, "2026-11-04T06:10:00Z"), now)
-        parcel.record(event(TrackingEventType.DELIVERED, "2026-11-04T11:42:00Z"), now)
+        parcel.record(TrackingEvents.outForDelivery("2026-11-04T06:10:00Z"), now)
+        parcel.record(TrackingEvents.delivered("2026-11-04T11:42:00Z"), now)
 
-        assertThatThrownBy { parcel.record(event(TrackingEventType.IN_TRANSIT, "2026-11-04T12:00:00Z"), now) }
+        assertThatThrownBy { parcel.record(TrackingEvents.inTransit("2026-11-04T12:00:00Z"), now) }
             .isInstanceOf(IllegalStatusTransitionException::class.java)
         assertThat(parcel.status).isEqualTo(ParcelStatus.DELIVERED)
     }
@@ -83,8 +83,8 @@ class ParcelTest {
     @Test
     fun `timeline is ordered by carrier event time, not by arrival`() {
         val parcel = aPickedUpParcel(pickedUpAt = "2026-11-02T14:00:00Z")
-        parcel.record(event(TrackingEventType.OUT_FOR_DELIVERY, "2026-11-04T06:10:00Z"), now)
-        parcel.record(event(TrackingEventType.IN_TRANSIT, "2026-11-03T02:00:00Z"), now)
+        parcel.record(TrackingEvents.outForDelivery("2026-11-04T06:10:00Z"), now)
+        parcel.record(TrackingEvents.inTransit("2026-11-03T02:00:00Z"), now)
 
         assertThat(parcel.timeline().map { it.type }).containsExactly(
             TrackingEventType.PICKED_UP,

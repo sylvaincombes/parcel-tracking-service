@@ -4,14 +4,13 @@ import com.shoplane.parceltracking.domain.calendar.BusinessCalendar
 import com.shoplane.parceltracking.domain.carrier.TransitDays
 import com.shoplane.parceltracking.domain.eta.EtaCalculator
 import com.shoplane.parceltracking.domain.parcel.ParcelNotFoundException
-import com.shoplane.parceltracking.domain.parcel.TrackingEventType
 import com.shoplane.parceltracking.domain.parcel.TrackingNumber
 import com.shoplane.parceltracking.fixtures.InMemoryParcelRepository
 import com.shoplane.parceltracking.fixtures.PARCELWAVE
 import com.shoplane.parceltracking.fixtures.StubCarrierDirectory
+import com.shoplane.parceltracking.fixtures.TrackingEvents
 import com.shoplane.parceltracking.fixtures.aCarrier
 import com.shoplane.parceltracking.fixtures.aPickedUpParcel
-import com.shoplane.parceltracking.fixtures.event
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -37,8 +36,8 @@ class GetPublicTrackingUseCaseTest {
     @Test
     fun `a delivered parcel has no delivery window`() {
         val parcel = aPickedUpParcel(trackingNumber = "CW4400112233FR").apply {
-            record(event(TrackingEventType.OUT_FOR_DELIVERY, "2026-11-04T06:10:00Z"), Instant.parse("2026-11-04T06:10:00Z"))
-            record(event(TrackingEventType.DELIVERED, "2026-11-04T11:42:00Z"), Instant.parse("2026-11-04T11:42:00Z"))
+            record(TrackingEvents.outForDelivery("2026-11-04T06:10:00Z"), Instant.parse("2026-11-04T06:10:00Z"))
+            record(TrackingEvents.delivered("2026-11-04T11:42:00Z"), Instant.parse("2026-11-04T11:42:00Z"))
         }
         val useCase = GetPublicTrackingUseCase(InMemoryParcelRepository(parcel), carriers, etaCalculator)
 

@@ -5,8 +5,6 @@ import com.shoplane.parceltracking.domain.parcel.OrderReference
 import com.shoplane.parceltracking.domain.parcel.Parcel
 import com.shoplane.parceltracking.domain.parcel.ParcelId
 import com.shoplane.parceltracking.domain.parcel.SellerId
-import com.shoplane.parceltracking.domain.parcel.TrackingEvent
-import com.shoplane.parceltracking.domain.parcel.TrackingEventType
 import com.shoplane.parceltracking.domain.parcel.TrackingNumber
 import java.time.Instant
 
@@ -37,8 +35,5 @@ fun aPickedUpParcel(
     carrierCode: CarrierCode = COLISWAY,
 ): Parcel =
     aRegisteredParcel(trackingNumber = trackingNumber, sellerId = sellerId, carrierCode = carrierCode).apply {
-        record(event(TrackingEventType.PICKED_UP, pickedUpAt), Instant.parse(pickedUpAt))
+        record(TrackingEvents.pickedUp(pickedUpAt), Instant.parse(pickedUpAt))
     }
-
-fun event(type: TrackingEventType, occurredAt: String, location: String? = "Lyon hub") =
-    TrackingEvent(type = type, occurredAt = Instant.parse(occurredAt), location = location)

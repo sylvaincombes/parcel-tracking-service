@@ -2,8 +2,8 @@ package com.shoplane.parceltracking.infra.persistence
 
 import com.shoplane.parceltracking.domain.parcel.ParcelStatus
 import com.shoplane.parceltracking.domain.parcel.TrackingEventType
+import com.shoplane.parceltracking.fixtures.TrackingEvents
 import com.shoplane.parceltracking.fixtures.aPickedUpParcel
-import com.shoplane.parceltracking.fixtures.event
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.Instant
@@ -27,7 +27,7 @@ class ParcelEntityMapperTest {
     fun `applying changes only appends events not yet persisted`() {
         val parcel = aPickedUpParcel()
         val entity = ParcelEntityMapper.toNewEntity(parcel, now)
-        parcel.record(event(TrackingEventType.IN_TRANSIT, "2026-11-03T02:00:00Z"), now)
+        parcel.record(TrackingEvents.inTransit("2026-11-03T02:00:00Z"), now)
 
         ParcelEntityMapper.applyChanges(entity, parcel, now)
 
