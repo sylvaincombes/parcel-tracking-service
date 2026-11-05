@@ -7,6 +7,7 @@ import com.shoplane.parceltracking.domain.carrier.RetiredCarrierException
 import com.shoplane.parceltracking.domain.carrier.UnknownCarrierException
 import com.shoplane.parceltracking.domain.parcel.DuplicateTrackingNumberException
 import com.shoplane.parceltracking.domain.parcel.OrderReference
+import com.shoplane.parceltracking.domain.parcel.ParcelDimensions
 import com.shoplane.parceltracking.domain.parcel.ParcelStatus
 import com.shoplane.parceltracking.domain.parcel.TrackingNumber
 import com.shoplane.parceltracking.fixtures.COLISWAY
@@ -22,6 +23,7 @@ import com.shoplane.parceltracking.fixtures.fixedClockAt
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
 
 class RegisterParcelUseCaseTest {
     private val parcels = InMemoryParcelRepository()
@@ -38,6 +40,15 @@ class RegisterParcelUseCaseTest {
         assertThat(parcel.sellerId).isEqualTo(GARDEN_TOOLS_SELLER)
         assertThat(parcel.status).isEqualTo(ParcelStatus.REGISTERED)
         assertThat(parcels.saved).hasSize(1)
+    }
+
+    @Test
+    fun `keeps the dimensions declared by the seller`() {
+        val dimensions = ParcelDimensions(BigDecimal("2.350"), BigDecimal("40.0"), BigDecimal("30.0"), BigDecimal("12.5"))
+
+        val parcel = useCase.register(aSellerAdmin(), command().copy(dimensions = dimensions))
+
+        assertThat(parcel.dimensions).isEqualTo(dimensions)
     }
 
     @Test

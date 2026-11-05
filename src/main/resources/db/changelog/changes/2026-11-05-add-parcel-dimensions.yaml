@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2026-11-05-add-parcel-dimensions
+      author: tomas.ortega
+      changes:
+        - addColumn:
+            tableName: parcel
+            columns:
+              - column:
+                  name: weight_kg
+                  type: numeric(7,3)
+              - column:
+                  name: length_cm
+                  type: numeric(6,1)
+              - column:
+                  name: width_cm
+                  type: numeric(6,1)
+              - column:
+                  name: height_cm
+                  type: numeric(6,1)
+      rollback:
+        - dropColumn:
+            tableName: parcel
+            columns:
+              - column:
+                  name: weight_kg
+              - column:
+                  name: length_cm
+              - column:
+                  name: width_cm
+              - column:
+                  name: height_cm

@@ -3,6 +3,7 @@ package com.shoplane.parceltracking.infra.persistence
 import com.shoplane.parceltracking.domain.carrier.CarrierCode
 import com.shoplane.parceltracking.domain.parcel.OrderReference
 import com.shoplane.parceltracking.domain.parcel.Parcel
+import com.shoplane.parceltracking.domain.parcel.ParcelDimensions
 import com.shoplane.parceltracking.domain.parcel.ParcelId
 import com.shoplane.parceltracking.domain.parcel.SellerId
 import com.shoplane.parceltracking.domain.parcel.TrackingEvent
@@ -18,6 +19,7 @@ object ParcelEntityMapper {
             sellerId = SellerId(entity.sellerId),
             orderReference = OrderReference(entity.orderReference),
             registeredAt = entity.registeredAt,
+            dimensions = dimensionsOf(entity),
             status = entity.status,
             deliveryInstructions = entity.deliveryInstructions,
             events = entity.events.map(::toDomainEvent),
@@ -39,6 +41,10 @@ object ParcelEntityMapper {
             pickedUpOn = parcel.pickedUpOn,
             deliveredAt = parcel.deliveredAt,
             lateDetectedAt = parcel.lateDetectedAt,
+            weightKg = parcel.dimensions?.weightKg,
+            lengthCm = parcel.dimensions?.lengthCm,
+            widthCm = parcel.dimensions?.widthCm,
+            heightCm = parcel.dimensions?.heightCm,
             registeredAt = parcel.registeredAt,
             updatedAt = now,
         ).also { appendNewEvents(it, parcel, now) }
@@ -64,6 +70,16 @@ object ParcelEntityMapper {
                 receivedAt = now,
             )
         }
+    }
+
+    private fun dimensionsOf(entity: ParcelEntity): ParcelDimensions? {
+        val weight = entity.weightKg ?: return null
+        return ParcelDimensions(
+            weightKg = weight,
+            lengthCm = requireNotNull(entity.lengthCm),
+            widthCm = requireNotNull(entity.widthCm),
+            heightCm = requireNotNull(entity.heightCm),
+        )
     }
 
     private fun toDomainEvent(entity: TrackingEventEntity): TrackingEvent =

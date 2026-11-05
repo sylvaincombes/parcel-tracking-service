@@ -1,9 +1,13 @@
 package com.shoplane.parceltracking.presentation.backoffice
 
 import com.shoplane.parceltracking.domain.parcel.Parcel
+import com.shoplane.parceltracking.domain.parcel.ParcelDimensions
 import com.shoplane.parceltracking.domain.parcel.TrackingEvent
+import jakarta.validation.Valid
+import jakarta.validation.constraints.DecimalMin
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
+import java.math.BigDecimal
 import java.time.Instant
 import java.time.LocalDate
 
@@ -17,7 +21,32 @@ data class RegisterParcelRequest(
     val orderReference: String,
     @field:Size(max = 500)
     val deliveryInstructions: String? = null,
+    @field:Valid
+    val dimensions: ParcelDimensionsPayload? = null,
 )
+
+data class ParcelDimensionsPayload(
+    @field:DecimalMin("0.001")
+    val weightKg: BigDecimal,
+    @field:DecimalMin("0.1")
+    val lengthCm: BigDecimal,
+    @field:DecimalMin("0.1")
+    val widthCm: BigDecimal,
+    @field:DecimalMin("0.1")
+    val heightCm: BigDecimal,
+) {
+    fun toDomain() = ParcelDimensions(weightKg = weightKg, lengthCm = lengthCm, widthCm = widthCm, heightCm = heightCm)
+
+    companion object {
+        fun from(dimensions: ParcelDimensions) =
+            ParcelDimensionsPayload(
+                weightKg = dimensions.weightKg,
+                lengthCm = dimensions.lengthCm,
+                widthCm = dimensions.widthCm,
+                heightCm = dimensions.heightCm,
+            )
+    }
+}
 
 data class ParcelSummaryResponse(
     val parcelId: String,
@@ -50,6 +79,7 @@ data class ParcelDetailResponse(
     val orderReference: String,
     val status: String,
     val deliveryInstructions: String?,
+    val dimensions: ParcelDimensionsPayload?,
     val pickedUpOn: LocalDate?,
     val deliveredAt: Instant?,
     val lateDetectedAt: Instant?,
@@ -66,6 +96,7 @@ data class ParcelDetailResponse(
                 orderReference = parcel.orderReference.value,
                 status = parcel.status.name,
                 deliveryInstructions = parcel.deliveryInstructions,
+                dimensions = parcel.dimensions?.let(ParcelDimensionsPayload::from),
                 pickedUpOn = parcel.pickedUpOn,
                 deliveredAt = parcel.deliveredAt,
                 lateDetectedAt = parcel.lateDetectedAt,

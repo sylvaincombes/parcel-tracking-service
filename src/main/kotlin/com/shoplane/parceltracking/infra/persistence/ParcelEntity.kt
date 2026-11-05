@@ -11,6 +11,7 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
 import jakarta.persistence.Version
+import java.math.BigDecimal
 import java.time.Instant
 import java.time.LocalDate
 import java.util.UUID
@@ -39,6 +40,14 @@ class ParcelEntity(
     var deliveredAt: Instant?,
     @Column(name = "late_detected_at")
     var lateDetectedAt: Instant?,
+    @Column(name = "weight_kg", updatable = false)
+    val weightKg: BigDecimal?,
+    @Column(name = "length_cm", updatable = false)
+    val lengthCm: BigDecimal?,
+    @Column(name = "width_cm", updatable = false)
+    val widthCm: BigDecimal?,
+    @Column(name = "height_cm", updatable = false)
+    val heightCm: BigDecimal?,
     @Column(name = "registered_at", nullable = false, updatable = false)
     val registeredAt: Instant,
     @Column(name = "updated_at", nullable = false)

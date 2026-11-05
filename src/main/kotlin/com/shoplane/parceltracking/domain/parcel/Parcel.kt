@@ -13,6 +13,7 @@ class Parcel(
     val sellerId: SellerId,
     val orderReference: OrderReference,
     val registeredAt: Instant,
+    val dimensions: ParcelDimensions? = null,
     status: ParcelStatus = ParcelStatus.REGISTERED,
     deliveryInstructions: String? = null,
     events: List<TrackingEvent> = emptyList(),
@@ -98,6 +99,7 @@ class Parcel(
             sellerId: SellerId,
             orderReference: OrderReference,
             deliveryInstructions: String?,
+            dimensions: ParcelDimensions?,
             now: Instant,
         ): Parcel =
             Parcel(
@@ -107,6 +109,7 @@ class Parcel(
                 sellerId = sellerId,
                 orderReference = orderReference,
                 registeredAt = now,
+                dimensions = dimensions,
                 deliveryInstructions = deliveryInstructions?.trim()?.takeIf { it.isNotEmpty() },
             )
     }

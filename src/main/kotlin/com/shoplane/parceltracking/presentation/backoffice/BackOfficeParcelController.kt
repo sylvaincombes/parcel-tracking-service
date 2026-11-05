@@ -51,6 +51,7 @@ class BackOfficeParcelController(
             carrierCode = CarrierCode(request.carrierCode),
             orderReference = OrderReference(request.orderReference),
             deliveryInstructions = request.deliveryInstructions,
+            dimensions = request.dimensions?.toDomain(),
         )
         return ParcelDetailResponse.from(registerParcel.register(actor, command))
     }

@@ -22,6 +22,7 @@ class ParcelTest {
             sellerId = SellerId(4101),
             orderReference = OrderReference("SO-2026-118734"),
             deliveryInstructions = "   ",
+            dimensions = null,
             now = now,
         )
 

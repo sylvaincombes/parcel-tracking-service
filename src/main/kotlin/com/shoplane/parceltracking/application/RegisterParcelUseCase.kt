@@ -9,6 +9,7 @@ import com.shoplane.parceltracking.domain.carrier.UnknownCarrierException
 import com.shoplane.parceltracking.domain.parcel.DuplicateTrackingNumberException
 import com.shoplane.parceltracking.domain.parcel.OrderReference
 import com.shoplane.parceltracking.domain.parcel.Parcel
+import com.shoplane.parceltracking.domain.parcel.ParcelDimensions
 import com.shoplane.parceltracking.domain.parcel.ParcelRepository
 import com.shoplane.parceltracking.domain.parcel.TrackingNumber
 import org.springframework.stereotype.Service
@@ -20,6 +21,7 @@ data class RegisterParcel(
     val carrierCode: CarrierCode,
     val orderReference: OrderReference,
     val deliveryInstructions: String?,
+    val dimensions: ParcelDimensions? = null,
 )
 
 @Service
@@ -45,6 +47,7 @@ class RegisterParcelUseCase(
             sellerId = sellerId,
             orderReference = command.orderReference,
             deliveryInstructions = command.deliveryInstructions,
+            dimensions = command.dimensions,
             now = clock.instant(),
         )
         return parcels.save(parcel)
