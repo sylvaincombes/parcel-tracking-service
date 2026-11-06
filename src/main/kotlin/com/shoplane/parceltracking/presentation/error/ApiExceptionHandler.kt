@@ -8,6 +8,7 @@ import com.shoplane.parceltracking.domain.parcel.IllegalStatusTransitionExceptio
 import com.shoplane.parceltracking.domain.parcel.ParcelNotFoundException
 import com.shoplane.parceltracking.presentation.backoffice.MissingBackOfficeIdentityException
 import com.shoplane.parceltracking.presentation.webhook.InvalidWebhookSignatureException
+import org.slf4j.LoggerFactory
 import org.springframework.dao.OptimisticLockingFailureException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -54,6 +55,12 @@ class ApiExceptionHandler {
     )
     fun badRequest(exception: Exception) = error(HttpStatus.BAD_REQUEST, "invalid_request", exception)
 
-    private fun error(status: HttpStatus, code: String, exception: Exception): ResponseEntity<ApiError> =
-        ResponseEntity.status(status).body(ApiError(code, exception.message ?: status.reasonPhrase))
+    private fun error(status: HttpStatus, code: String, exception: Exception): ResponseEntity<ApiError> {
+        logger.error("Request rejected with {} {}", status.value(), code, exception)
+        return ResponseEntity.status(status).body(ApiError(code, exception.message ?: status.reasonPhrase))
+    }
+
+    private companion object {
+        val logger = LoggerFactory.getLogger(ApiExceptionHandler::class.java)
+    }
 }
