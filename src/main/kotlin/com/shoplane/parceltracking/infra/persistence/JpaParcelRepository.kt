@@ -26,6 +26,12 @@ class JpaParcelRepository(
         jpa.findBySellerIdOrderByRegisteredAtDesc(sellerId.value, SpringPageRequest.of(page.page, page.size))
             .map(ParcelEntityMapper::toDomain)
 
+    override fun findLateBySeller(sellerId: SellerId, page: PageRequest): List<Parcel> =
+        jpa.findBySellerIdAndLateDetectedAtIsNotNullOrderByLateDetectedAtDesc(
+            sellerId.value,
+            SpringPageRequest.of(page.page, page.size),
+        ).map(ParcelEntityMapper::toDomain)
+
     override fun findInFlightPickedUp(after: ParcelId?, limit: Int): List<Parcel> =
         jpa.findInFlightPickedUp(IN_FLIGHT_STATUSES, after?.value, SpringPageRequest.ofSize(limit))
             .map(ParcelEntityMapper::toDomain)

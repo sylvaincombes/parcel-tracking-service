@@ -31,6 +31,14 @@ class InMemoryParcelRepository(vararg initial: Parcel) : ParcelRepository {
             .take(page.size)
             .map(::copyOf)
 
+    override fun findLateBySeller(sellerId: SellerId, page: PageRequest): List<Parcel> =
+        parcels.values
+            .filter { it.sellerId == sellerId && it.isLate }
+            .sortedByDescending { it.lateDetectedAt }
+            .drop(page.page * page.size)
+            .take(page.size)
+            .map(::copyOf)
+
     override fun findInFlightPickedUp(after: ParcelId?, limit: Int): List<Parcel> =
         parcels.values
             .filter { it.pickedUpOn != null && !it.status.isTerminal && !it.isLate }

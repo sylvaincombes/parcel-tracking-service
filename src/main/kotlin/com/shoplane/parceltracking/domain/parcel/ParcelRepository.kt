@@ -7,6 +7,8 @@ interface ParcelRepository {
 
     fun findBySeller(sellerId: SellerId, page: PageRequest): List<Parcel>
 
+    fun findLateBySeller(sellerId: SellerId, page: PageRequest): List<Parcel>
+
     fun findInFlightPickedUp(after: ParcelId?, limit: Int): List<Parcel>
 
     fun save(parcel: Parcel): Parcel

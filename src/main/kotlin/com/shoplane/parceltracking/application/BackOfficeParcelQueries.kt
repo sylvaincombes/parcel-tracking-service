@@ -22,6 +22,11 @@ class BackOfficeParcelQueries(
         return parcels.findBySeller(sellerId, page)
     }
 
+    fun listLate(actor: BackOfficeActor, requestedSellerId: SellerId?, page: PageRequest): List<Parcel> {
+        val sellerId = accessPolicy.resolveSellerScope(actor, requestedSellerId)
+        return parcels.findLateBySeller(sellerId, page)
+    }
+
     fun detail(actor: BackOfficeActor, parcelId: ParcelId): Parcel {
         val parcel = parcels.findById(parcelId) ?: throw ParcelNotFoundException(parcelId.toString())
         accessPolicy.requireCanView(actor, parcel)

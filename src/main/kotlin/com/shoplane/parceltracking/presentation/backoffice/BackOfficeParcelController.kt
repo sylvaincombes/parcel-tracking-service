@@ -36,8 +36,17 @@ class BackOfficeParcelController(
         @RequestParam(required = false) sellerId: Long?,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "50") size: Int,
-    ): List<ParcelSummaryResponse> =
-        queries.list(actor, sellerId?.let(::SellerId), PageRequest(page, size)).map(ParcelSummaryResponse::from)
+        @RequestParam(defaultValue = "false") late: Boolean,
+    ): List<ParcelSummaryResponse> {
+        val requestedSellerId = sellerId?.let(::SellerId)
+        val pageRequest = PageRequest(page, size)
+        val parcels = if (late) {
+            queries.listLate(actor, requestedSellerId, pageRequest)
+        } else {
+            queries.list(actor, requestedSellerId, pageRequest)
+        }
+        return parcels.map(ParcelSummaryResponse::from)
+    }
 
     @GetMapping("/{parcelId}")
     fun detail(actor: BackOfficeActor, @PathVariable parcelId: UUID): ParcelDetailResponse =

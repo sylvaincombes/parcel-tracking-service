@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2026-11-06-index-parcel-seller-late
+      author: tomas.ortega
+      changes:
+        - sql:
+            sql: >-
+              CREATE INDEX CONCURRENTLY IF NOT EXISTS ix_parcel_seller_late ON parcel (seller_id, late_detected_at DESC)
+              WHERE late_detected_at IS NOT NULL
+      rollback:
+        - sql:
+            sql: DROP INDEX CONCURRENTLY IF EXISTS ix_parcel_seller_late

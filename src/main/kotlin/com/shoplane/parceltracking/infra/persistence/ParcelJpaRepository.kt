@@ -12,6 +12,8 @@ interface ParcelJpaRepository : JpaRepository<ParcelEntity, UUID> {
 
     fun findBySellerIdOrderByRegisteredAtDesc(sellerId: Long, pageable: Pageable): List<ParcelEntity>
 
+    fun findBySellerIdAndLateDetectedAtIsNotNullOrderByLateDetectedAtDesc(sellerId: Long, pageable: Pageable): List<ParcelEntity>
+
     @Query(
         """
         select p from ParcelEntity p
