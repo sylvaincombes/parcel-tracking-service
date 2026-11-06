@@ -25,7 +25,7 @@ data class ParcelSummaryResponse(
     val carrierCode: String,
     val orderReference: String,
     val status: String,
-    val late: Boolean,
+    val lateSince: Instant?,
     val registeredAt: Instant,
 ) {
     companion object {
@@ -36,7 +36,7 @@ data class ParcelSummaryResponse(
                 carrierCode = parcel.carrierCode.value,
                 orderReference = parcel.orderReference.value,
                 status = parcel.status.name,
-                late = parcel.isLate,
+                lateSince = parcel.lateDetectedAt,
                 registeredAt = parcel.registeredAt,
             )
     }
