@@ -19,7 +19,7 @@ interface ParcelJpaRepository : JpaRepository<ParcelEntity, UUID> {
           and p.pickedUpOn is not null
           and p.lateDetectedAt is null
           and (:after is null or p.id > :after)
-        order by p.id
+        order by p.pickedUpOn, p.id
         """,
     )
     fun findInFlightPickedUp(
