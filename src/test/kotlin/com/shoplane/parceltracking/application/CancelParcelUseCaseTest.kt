@@ -2,7 +2,10 @@ package com.shoplane.parceltracking.application
 
 import com.shoplane.parceltracking.application.access.AccessDeniedException
 import com.shoplane.parceltracking.application.access.ParcelAccessPolicy
+import com.shoplane.parceltracking.domain.audit.ParcelAuditAction
+import com.shoplane.parceltracking.domain.audit.ParcelAuditEntry
 import com.shoplane.parceltracking.domain.parcel.ParcelStatus
+import com.shoplane.parceltracking.fixtures.InMemoryParcelAuditLog
 import com.shoplane.parceltracking.fixtures.InMemoryParcelRepository
 import com.shoplane.parceltracking.fixtures.LIGHTING_SELLER
 import com.shoplane.parceltracking.fixtures.RecordingParcelEventPublisher
@@ -13,12 +16,14 @@ import com.shoplane.parceltracking.fixtures.fixedClockAt
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import java.time.Instant
 
 class CancelParcelUseCaseTest {
     private val parcel = aRegisteredParcel()
     private val parcels = InMemoryParcelRepository(parcel)
     private val publisher = RecordingParcelEventPublisher()
-    private val useCase = CancelParcelUseCase(parcels, ParcelAccessPolicy(), publisher, fixedClockAt("2026-11-02T10:00:00Z"))
+    private val auditLog = InMemoryParcelAuditLog()
+    private val useCase = CancelParcelUseCase(parcels, ParcelAccessPolicy(), publisher, auditLog, fixedClockAt("2026-11-02T10:00:00Z"))
 
     @Test
     fun `the seller cancels its own parcel`() {
@@ -39,5 +44,19 @@ class CancelParcelUseCaseTest {
     @Test
     fun `support agents can cancel any parcel`() {
         assertThat(useCase.cancel(aSupportAgent(), parcel.id).status).isEqualTo(ParcelStatus.CANCELLED)
+    }
+
+    @Test
+    fun `cancelling a parcel records who cancelled it`() {
+        useCase.cancel(aSupportAgent(), parcel.id)
+
+        assertThat(auditLog.entriesOf(parcel.id)).containsExactly(
+            ParcelAuditEntry(
+                parcelId = parcel.id,
+                actorUserId = "support-agent-17",
+                action = ParcelAuditAction.CANCELLED,
+                occurredAt = Instant.parse("2026-11-02T10:00:00Z"),
+            ),
+        )
     }
 }

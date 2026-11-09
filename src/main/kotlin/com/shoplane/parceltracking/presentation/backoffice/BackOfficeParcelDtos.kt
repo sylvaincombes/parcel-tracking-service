@@ -1,5 +1,6 @@
 package com.shoplane.parceltracking.presentation.backoffice
 
+import com.shoplane.parceltracking.domain.audit.ParcelAuditEntry
 import com.shoplane.parceltracking.domain.parcel.Parcel
 import com.shoplane.parceltracking.domain.parcel.TrackingEvent
 import jakarta.validation.constraints.NotBlank
@@ -88,6 +89,21 @@ data class ParcelEventResponse(
                 occurredAt = event.occurredAt,
                 location = event.location,
                 attemptReason = event.attemptReason?.name,
+            )
+    }
+}
+
+data class ParcelAuditEntryResponse(
+    val action: String,
+    val actorUserId: String,
+    val occurredAt: Instant,
+) {
+    companion object {
+        fun from(entry: ParcelAuditEntry) =
+            ParcelAuditEntryResponse(
+                action = entry.action.name,
+                actorUserId = entry.actorUserId,
+                occurredAt = entry.occurredAt,
             )
     }
 }

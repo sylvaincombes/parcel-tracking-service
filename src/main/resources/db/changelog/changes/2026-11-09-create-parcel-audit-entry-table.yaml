@@ -1,0 +1,46 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2026-11-09-create-parcel-audit-entry-table
+      author: lea.fontaine
+      changes:
+        - createTable:
+            tableName: parcel_audit_entry
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: parcel_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_parcel_audit_entry_parcel
+                    references: parcel(id)
+              - column:
+                  name: actor_user_id
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: action
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: occurred_at
+                  type: timestamptz
+                  constraints:
+                    nullable: false
+        - createIndex:
+            tableName: parcel_audit_entry
+            indexName: ix_parcel_audit_entry_actor
+            columns:
+              - column:
+                  name: actor_user_id
+      rollback:
+        - dropTable:
+            tableName: parcel_audit_entry

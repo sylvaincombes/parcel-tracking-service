@@ -2,6 +2,7 @@ package com.shoplane.parceltracking.presentation.backoffice
 
 import com.shoplane.parceltracking.application.BackOfficeParcelQueries
 import com.shoplane.parceltracking.application.CancelParcelUseCase
+import com.shoplane.parceltracking.application.GetParcelAuditTrailUseCase
 import com.shoplane.parceltracking.application.RegisterParcel
 import com.shoplane.parceltracking.application.RegisterParcelUseCase
 import com.shoplane.parceltracking.application.access.BackOfficeActor
@@ -29,6 +30,7 @@ class BackOfficeParcelController(
     private val queries: BackOfficeParcelQueries,
     private val registerParcel: RegisterParcelUseCase,
     private val cancelParcel: CancelParcelUseCase,
+    private val getParcelAuditTrail: GetParcelAuditTrailUseCase,
 ) {
     @GetMapping
     fun list(
@@ -58,4 +60,8 @@ class BackOfficeParcelController(
     @PostMapping("/{parcelId}/cancel")
     fun cancel(actor: BackOfficeActor, @PathVariable parcelId: UUID): ParcelDetailResponse =
         ParcelDetailResponse.from(cancelParcel.cancel(actor, ParcelId(parcelId)))
+
+    @GetMapping("/{parcelId}/audit")
+    fun auditTrail(actor: BackOfficeActor, @PathVariable parcelId: UUID): List<ParcelAuditEntryResponse> =
+        getParcelAuditTrail.auditTrail(actor, ParcelId(parcelId)).map(ParcelAuditEntryResponse::from)
 }
