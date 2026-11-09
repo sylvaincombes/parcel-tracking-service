@@ -1,6 +1,7 @@
 package com.shoplane.parceltracking.domain.attempt
 
 enum class DeliveryAttemptReason {
+    ACCESS_CODE_MISSING,
     REFUSED_BY_RECIPIENT,
     ADDRESS_ISSUE,
     BUSINESS_CLOSED,
@@ -11,6 +12,7 @@ enum class DeliveryAttemptReason {
 class DeliveryAttemptClassifier {
     private val rules: List<Rule> =
         listOf(
+            Rule(DeliveryAttemptReason.ACCESS_CODE_MISSING, "access code", "door code", "digicode", "code"),
             Rule(DeliveryAttemptReason.REFUSED_BY_RECIPIENT, "refused", "refusé", "declined by recipient"),
             Rule(DeliveryAttemptReason.ADDRESS_ISSUE, "address", "adresse", "postal code", "zip code", "unknown street"),
             Rule(DeliveryAttemptReason.BUSINESS_CLOSED, "closed", "fermé", "business hours"),

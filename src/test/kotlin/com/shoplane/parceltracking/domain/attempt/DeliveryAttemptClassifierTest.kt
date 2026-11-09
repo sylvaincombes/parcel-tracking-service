@@ -12,6 +12,8 @@ class DeliveryAttemptClassifierTest {
     @CsvSource(
         delimiter = '|',
         value = [
+            "Door code missing, could not enter     | ACCESS_CODE_MISSING",
+            "Digicode manquant                     | ACCESS_CODE_MISSING",
             "Parcel refused by recipient           | REFUSED_BY_RECIPIENT",
             "Colis refusé par le destinataire      | REFUSED_BY_RECIPIENT",
             "Address incomplete, missing building  | ADDRESS_ISSUE",
@@ -38,6 +40,7 @@ class DeliveryAttemptClassifierTest {
                 "Recipient not absent, parcel left with neighbour | RECIPIENT_ABSENT",
                 "Empfänger nicht angetroffen                    | OTHER",
                 "Recipient abscent                              | OTHER",
+                "Access code given, recipient absent            | ACCESS_CODE_MISSING",
             ],
         )
         fun `first matching rule wins, negations, other languages and typos are not understood`(
