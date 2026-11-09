@@ -19,6 +19,6 @@ data class PageRequest(val page: Int, val size: Int) {
     }
 
     companion object {
-        const val MAX_SIZE = 200
+        const val MAX_SIZE = 50
     }
 }
