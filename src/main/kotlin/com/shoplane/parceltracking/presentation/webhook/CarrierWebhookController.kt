@@ -19,6 +19,7 @@ import tools.jackson.databind.json.JsonMapper
 class CarrierWebhookController(
     private val signatureVerifier: WebhookSignatureVerifier,
     private val recordTrackingEvent: RecordTrackingEventUseCase,
+    private val recentCarrierEvents: RecentCarrierEvents,
     private val jsonMapper: JsonMapper,
 ) {
     @PostMapping("/{carrierCode}/events")
@@ -29,6 +30,10 @@ class CarrierWebhookController(
     ): ResponseEntity<CarrierWebhookResponse> {
         signatureVerifier.verify(carrierCode, body, signature)
         val payload = jsonMapper.readValue(body, CarrierWebhookPayload::class.java)
+        if (!recentCarrierEvents.isFirstDelivery(carrierCode, payload.eventId)) {
+            logger.info("Ignoring repeated delivery of carrier event {} from {}", payload.eventId, carrierCode)
+            return ResponseEntity.accepted().body(CarrierWebhookResponse("DUPLICATE_IGNORED"))
+        }
         val type = CarrierEventCodeMapper.typeOf(payload.code)
         if (type == null) {
             logger.info("Ignoring carrier event {} with unmapped code {} from {}", payload.eventId, payload.code, carrierCode)
