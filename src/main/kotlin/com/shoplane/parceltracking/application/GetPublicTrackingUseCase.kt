@@ -11,6 +11,8 @@ import com.shoplane.parceltracking.domain.parcel.TrackingNumber
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.net.URI
+import java.time.Clock
+import java.time.LocalDate
 
 data class PublicTracking(
     val parcel: Parcel,
@@ -24,6 +26,7 @@ class GetPublicTrackingUseCase(
     private val parcels: ParcelRepository,
     private val carriers: CarrierDirectory,
     private val etaCalculator: EtaCalculator,
+    private val clock: Clock,
 ) {
     @Transactional(readOnly = true)
     fun track(trackingNumber: TrackingNumber): PublicTracking {
@@ -39,7 +42,7 @@ class GetPublicTrackingUseCase(
     }
 
     private fun estimateFor(parcel: Parcel, carrier: Carrier): DeliveryEstimate? {
-        val pickedUpOn = parcel.pickedUpOn ?: return null
+        val pickedUpOn = parcel.pickedUpOn ?: return etaCalculator.estimate(LocalDate.now(clock), carrier.transitDays)
         if (parcel.status.isTerminal) {
             return null
         }
