@@ -17,3 +17,5 @@ databaseChangeLog:
       file: db/changelog/changes/2026-07-20-index-parcel-in-flight.yaml
   - include:
       file: db/changelog/changes/2026-09-07-add-tracking-event-attempt-reason.yaml
+  - include:
+      file: db/changelog/changes/2026-11-10-create-carrier-cut-off-table.yaml

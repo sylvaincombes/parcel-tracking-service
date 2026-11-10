@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2026-11-10-create-carrier-cut-off-table
+      author: jonas.weber
+      changes:
+        - createTable:
+            tableName: carrier_cut_off
+            columns:
+              - column:
+                  name: carrier_code
+                  type: varchar(32)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: cut_off_time
+                  type: time
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropTable:
+            tableName: carrier_cut_off
