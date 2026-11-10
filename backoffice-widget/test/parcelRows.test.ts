@@ -24,3 +24,19 @@ test("shows the late badge only for parcels flagged late", () => {
     ],
   );
 });
+
+test("lists the rows newest first unless asked otherwise", () => {
+  const parcels = [
+    parcelSummary({ parcelId: "earlier", registeredAt: "2026-11-02T09:15:00Z" }),
+    parcelSummary({ parcelId: "later", registeredAt: "2026-11-03T10:00:00Z" }),
+  ];
+
+  assert.deepEqual(
+    toParcelRows(parcels).map((row) => row.parcelId),
+    ["later", "earlier"],
+  );
+  assert.deepEqual(
+    toParcelRows(parcels, "oldest").map((row) => row.parcelId),
+    ["earlier", "later"],
+  );
+});
