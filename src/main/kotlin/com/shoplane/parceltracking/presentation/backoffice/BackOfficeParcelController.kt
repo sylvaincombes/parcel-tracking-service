@@ -43,6 +43,10 @@ class BackOfficeParcelController(
     fun detail(actor: BackOfficeActor, @PathVariable parcelId: UUID): ParcelDetailResponse =
         ParcelDetailResponse.from(queries.detail(actor, ParcelId(parcelId)))
 
+    @GetMapping("/{parcelId}/events")
+    fun events(actor: BackOfficeActor, @PathVariable parcelId: UUID): List<ParcelEventResponse> =
+        queries.events(actor, ParcelId(parcelId)).map(ParcelEventResponse::from)
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun register(actor: BackOfficeActor, @Valid @RequestBody request: RegisterParcelRequest): ParcelDetailResponse {

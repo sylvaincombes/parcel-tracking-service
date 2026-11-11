@@ -8,6 +8,7 @@ import com.shoplane.parceltracking.domain.parcel.ParcelId
 import com.shoplane.parceltracking.domain.parcel.ParcelNotFoundException
 import com.shoplane.parceltracking.domain.parcel.ParcelRepository
 import com.shoplane.parceltracking.domain.parcel.SellerId
+import com.shoplane.parceltracking.domain.parcel.TrackingEvent
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -26,5 +27,11 @@ class BackOfficeParcelQueries(
         val parcel = parcels.findById(parcelId) ?: throw ParcelNotFoundException(parcelId.toString())
         accessPolicy.requireCanView(actor, parcel)
         return parcel
+    }
+
+    fun events(actor: BackOfficeActor, parcelId: ParcelId): List<TrackingEvent> {
+        val parcel = parcels.findById(parcelId) ?: throw ParcelNotFoundException(parcelId.toString())
+        accessPolicy.requireCanView(actor, parcel)
+        return parcel.events
     }
 }

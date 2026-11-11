@@ -30,6 +30,11 @@ routes:
     path: ^/back-office/v1/parcels/[^/]+$
     auth: backoffice-session
 
+  - id: backoffice-parcel-events
+    methods: [GET]
+    path: ^/back-office/v1/parcels/[^/]+/events$
+    auth: backoffice-session
+
   - id: backoffice-parcel-cancel
     methods: [POST]
     path: ^/back-office/v1/parcels/[^/]+/cancel$
