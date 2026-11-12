@@ -7,6 +7,7 @@ import com.shoplane.parceltracking.domain.parcel.ParcelRepository
 import com.shoplane.parceltracking.domain.parcel.SellerId
 import com.shoplane.parceltracking.domain.parcel.TrackingNumber
 import org.springframework.orm.ObjectOptimisticLockingFailureException
+import java.time.Instant
 
 class InMemoryParcelRepository(vararg initial: Parcel) : ParcelRepository {
     private val parcels = linkedMapOf<ParcelId, Parcel>()
@@ -29,6 +30,12 @@ class InMemoryParcelRepository(vararg initial: Parcel) : ParcelRepository {
             .sortedByDescending { it.registeredAt }
             .drop(page.page * page.size)
             .take(page.size)
+            .map(::copyOf)
+
+    override fun findBySellerRegisteredBetween(sellerId: SellerId, from: Instant, until: Instant): List<Parcel> =
+        parcels.values
+            .filter { it.sellerId == sellerId && it.registeredAt >= from && it.registeredAt < until }
+            .sortedBy { it.registeredAt }
             .map(::copyOf)
 
     override fun findInFlightPickedUp(after: ParcelId?, limit: Int): List<Parcel> =

@@ -1,11 +1,15 @@
 package com.shoplane.parceltracking.domain.parcel
 
+import java.time.Instant
+
 interface ParcelRepository {
     fun findById(id: ParcelId): Parcel?
 
     fun findByTrackingNumber(trackingNumber: TrackingNumber): Parcel?
 
     fun findBySeller(sellerId: SellerId, page: PageRequest): List<Parcel>
+
+    fun findBySellerRegisteredBetween(sellerId: SellerId, from: Instant, until: Instant): List<Parcel>
 
     fun findInFlightPickedUp(after: ParcelId?, limit: Int): List<Parcel>
 

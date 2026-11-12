@@ -5,12 +5,28 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
+import java.time.Instant
 import java.util.UUID
 
 interface ParcelJpaRepository : JpaRepository<ParcelEntity, UUID> {
     fun findByTrackingNumber(trackingNumber: String): ParcelEntity?
 
     fun findBySellerIdOrderByRegisteredAtDesc(sellerId: Long, pageable: Pageable): List<ParcelEntity>
+
+    @Query(
+        """
+        select p from ParcelEntity p
+        where p.sellerId = :sellerId
+          and p.registeredAt >= :registeredFrom
+          and p.registeredAt < :registeredUntil
+        order by p.registeredAt
+        """,
+    )
+    fun findBySellerRegisteredBetween(
+        @Param("sellerId") sellerId: Long,
+        @Param("registeredFrom") registeredFrom: Instant,
+        @Param("registeredUntil") registeredUntil: Instant,
+    ): List<ParcelEntity>
 
     @Query(
         """

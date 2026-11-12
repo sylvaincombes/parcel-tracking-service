@@ -25,6 +25,11 @@ routes:
     path: ^/back-office/v1/parcels$
     auth: backoffice-session
 
+  - id: backoffice-parcel-export
+    methods: [GET]
+    path: ^/back-office/v1/parcels/export$
+    auth: backoffice-session
+
   - id: backoffice-parcel-detail
     methods: [GET]
     path: ^/back-office/v1/parcels/[^/]+$

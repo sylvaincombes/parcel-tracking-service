@@ -10,6 +10,7 @@ import com.shoplane.parceltracking.domain.parcel.TrackingNumber
 import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.stereotype.Repository
 import java.time.Clock
+import java.time.Instant
 import org.springframework.data.domain.PageRequest as SpringPageRequest
 
 @Repository
@@ -25,6 +26,9 @@ class JpaParcelRepository(
     override fun findBySeller(sellerId: SellerId, page: PageRequest): List<Parcel> =
         jpa.findBySellerIdOrderByRegisteredAtDesc(sellerId.value, SpringPageRequest.of(page.page, page.size))
             .map(ParcelEntityMapper::toDomain)
+
+    override fun findBySellerRegisteredBetween(sellerId: SellerId, from: Instant, until: Instant): List<Parcel> =
+        jpa.findBySellerRegisteredBetween(sellerId.value, from, until).map(ParcelEntityMapper::toDomain)
 
     override fun findInFlightPickedUp(after: ParcelId?, limit: Int): List<Parcel> =
         jpa.findInFlightPickedUp(IN_FLIGHT_STATUSES, after?.value, SpringPageRequest.ofSize(limit))
