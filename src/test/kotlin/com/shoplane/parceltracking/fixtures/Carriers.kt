@@ -7,6 +7,7 @@ import com.shoplane.parceltracking.domain.carrier.TransitDays
 
 val COLISWAY = CarrierCode("colisway")
 val PARCELWAVE = CarrierCode("parcelwave")
+val PARCELINO = CarrierCode("parcelino")
 
 fun aCarrier(
     code: CarrierCode = COLISWAY,

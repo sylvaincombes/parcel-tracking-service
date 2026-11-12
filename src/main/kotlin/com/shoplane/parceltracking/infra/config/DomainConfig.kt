@@ -2,6 +2,7 @@ package com.shoplane.parceltracking.infra.config
 
 import com.shoplane.parceltracking.domain.attempt.DeliveryAttemptClassifier
 import com.shoplane.parceltracking.domain.calendar.BusinessCalendar
+import com.shoplane.parceltracking.domain.carrier.CarrierCode
 import com.shoplane.parceltracking.domain.eta.EtaCalculator
 import com.shoplane.parceltracking.domain.lateness.LateParcelDetector
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -19,6 +20,7 @@ data class CalendarProperties(
 @ConfigurationProperties(prefix = "parcel-tracking.late-detection")
 data class LateDetectionProperties(
     val graceBusinessDays: Int = 1,
+    val excludedCarrierCodes: Set<String> = emptySet(),
 )
 
 @Configuration
@@ -35,7 +37,11 @@ class DomainConfig {
 
     @Bean
     fun lateParcelDetector(calendar: BusinessCalendar, properties: LateDetectionProperties) =
-        LateParcelDetector(calendar, properties.graceBusinessDays)
+        LateParcelDetector(
+            calendar = calendar,
+            graceBusinessDays = properties.graceBusinessDays,
+            excludedCarriers = properties.excludedCarrierCodes.map(::CarrierCode).toSet(),
+        )
 
     @Bean
     fun deliveryAttemptClassifier() = DeliveryAttemptClassifier()

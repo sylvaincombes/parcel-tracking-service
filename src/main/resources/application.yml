@@ -52,6 +52,8 @@ parcel-tracking:
   late-detection:
     cron: "0 15 * * * *"
     grace-business-days: 1
+    excluded-carriers:
+      - parcelino
   webhooks:
     secrets: {}
   calendar:

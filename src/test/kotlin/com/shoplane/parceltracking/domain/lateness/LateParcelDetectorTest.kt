@@ -3,6 +3,7 @@ package com.shoplane.parceltracking.domain.lateness
 import com.shoplane.parceltracking.domain.calendar.BusinessCalendar
 import com.shoplane.parceltracking.domain.carrier.TransitDays
 import com.shoplane.parceltracking.domain.parcel.TrackingEventType
+import com.shoplane.parceltracking.fixtures.PARCELINO
 import com.shoplane.parceltracking.fixtures.aCarrier
 import com.shoplane.parceltracking.fixtures.aPickedUpParcel
 import com.shoplane.parceltracking.fixtures.aRegisteredParcel
@@ -52,5 +53,22 @@ class LateParcelDetectorTest {
         }
 
         assertThat(detector.isLate(parcel, carrier, LocalDate.parse("2026-11-30"))).isFalse()
+    }
+
+    @Test
+    fun `a parcel of a carrier without committed transit times is never late`() {
+        val parcelino = aCarrier(code = PARCELINO, displayName = "Parcelino")
+        val detector = LateParcelDetector(BusinessCalendar(emptySet()), graceBusinessDays = 1, excludedCarriers = setOf(PARCELINO))
+        val parcel = aPickedUpParcel(pickedUpAt = "2026-11-16T14:00:00Z", trackingNumber = "PL5520034411FR", carrierCode = PARCELINO)
+
+        assertThat(detector.isLate(parcel, parcelino, LocalDate.parse("2026-11-23"))).isFalse()
+    }
+
+    @Test
+    fun `parcels of other carriers are still late when a carrier is excluded`() {
+        val detector = LateParcelDetector(BusinessCalendar(emptySet()), graceBusinessDays = 1, excludedCarriers = setOf(PARCELINO))
+        val parcel = aPickedUpParcel(pickedUpAt = "2026-11-16T14:00:00Z")
+
+        assertThat(detector.isLate(parcel, carrier, LocalDate.parse("2026-11-23"))).isTrue()
     }
 }
