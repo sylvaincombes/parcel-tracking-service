@@ -5,11 +5,15 @@ interface ParcelRepository {
 
     fun findByTrackingNumber(trackingNumber: TrackingNumber): Parcel?
 
+    fun findSnapshot(trackingNumber: TrackingNumber): ParcelSnapshot?
+
     fun findBySeller(sellerId: SellerId, page: PageRequest): List<Parcel>
 
     fun findInFlightPickedUp(after: ParcelId?, limit: Int): List<Parcel>
 
     fun save(parcel: Parcel): Parcel
+
+    fun appendEvent(parcelId: ParcelId, event: TrackingEvent, status: ParcelStatus)
 }
 
 data class PageRequest(val page: Int, val size: Int) {

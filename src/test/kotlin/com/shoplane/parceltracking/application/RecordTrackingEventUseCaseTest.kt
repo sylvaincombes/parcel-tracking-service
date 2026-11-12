@@ -64,6 +64,17 @@ class RecordTrackingEventUseCaseTest {
     }
 
     @Test
+    fun `delivery stores the carrier delivery time`() {
+        useCase.record(command(TrackingEventType.OUT_FOR_DELIVERY))
+
+        useCase.record(command(TrackingEventType.DELIVERED))
+
+        val delivered = parcels.findById(parcel.id)
+        assertThat(delivered?.status).isEqualTo(ParcelStatus.DELIVERED)
+        assertThat(delivered?.deliveredAt).isEqualTo(Instant.parse("2026-11-04T09:15:00Z"))
+    }
+
+    @Test
     fun `ignores events sent by another carrier for the same tracking number`() {
         assertThatThrownBy { useCase.record(command(TrackingEventType.OUT_FOR_DELIVERY).copy(carrierCode = PARCELWAVE)) }
             .isInstanceOf(ParcelNotFoundException::class.java)
