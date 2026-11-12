@@ -10,6 +10,7 @@ object CarrierEventCodeMapper {
             "HUB" to TrackingEventType.ARRIVED_AT_HUB,
             "OFD" to TrackingEventType.OUT_FOR_DELIVERY,
             "ATT" to TrackingEventType.DELIVERY_ATTEMPT_FAILED,
+            "PPT" to TrackingEventType.ARRIVED_AT_PICKUP_POINT,
             "DLV" to TrackingEventType.DELIVERED,
             "RTS" to TrackingEventType.RETURNED_TO_SENDER,
         )

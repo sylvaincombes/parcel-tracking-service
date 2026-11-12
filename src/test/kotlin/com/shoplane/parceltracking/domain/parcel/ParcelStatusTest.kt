@@ -20,6 +20,19 @@ class ParcelStatusTest {
     }
 
     @Test
+    fun `a parcel in transit, out for delivery or after a failed attempt can wait at a pickup point`() {
+        assertThat(ParcelStatus.entries.filter { it.canMoveTo(ParcelStatus.AWAITING_COLLECTION) })
+            .containsExactlyInAnyOrder(ParcelStatus.IN_TRANSIT, ParcelStatus.OUT_FOR_DELIVERY, ParcelStatus.DELIVERY_FAILED)
+    }
+
+    @Test
+    fun `a parcel waiting at a pickup point is either collected or returned to the seller`() {
+        assertThat(ParcelStatus.AWAITING_COLLECTION.isTerminal).isFalse()
+        assertThat(ParcelStatus.entries.filter { ParcelStatus.AWAITING_COLLECTION.canMoveTo(it) })
+            .containsExactlyInAnyOrder(ParcelStatus.DELIVERED, ParcelStatus.RETURNED_TO_SENDER)
+    }
+
+    @Test
     fun `a registered parcel cannot be delivered before being handed to the carrier`() {
         assertThat(ParcelStatus.REGISTERED.canMoveTo(ParcelStatus.DELIVERED)).isFalse()
     }

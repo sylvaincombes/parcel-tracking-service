@@ -9,6 +9,7 @@ enum class TrackingEventType(val resultingStatus: ParcelStatus) {
     ARRIVED_AT_HUB(ParcelStatus.IN_TRANSIT),
     OUT_FOR_DELIVERY(ParcelStatus.OUT_FOR_DELIVERY),
     DELIVERY_ATTEMPT_FAILED(ParcelStatus.DELIVERY_FAILED),
+    ARRIVED_AT_PICKUP_POINT(ParcelStatus.AWAITING_COLLECTION),
     DELIVERED(ParcelStatus.DELIVERED),
     RETURNED_TO_SENDER(ParcelStatus.RETURNED_TO_SENDER),
 }

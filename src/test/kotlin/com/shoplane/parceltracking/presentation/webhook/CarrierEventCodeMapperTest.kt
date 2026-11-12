@@ -1,5 +1,6 @@
 package com.shoplane.parceltracking.presentation.webhook
 
+import com.shoplane.parceltracking.domain.parcel.ParcelStatus
 import com.shoplane.parceltracking.domain.parcel.TrackingEventType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -10,6 +11,12 @@ class CarrierEventCodeMapperTest {
         assertThat(CarrierEventCodeMapper.typeOf("dlv")).isEqualTo(TrackingEventType.DELIVERED)
         assertThat(CarrierEventCodeMapper.typeOf(" OFD ")).isEqualTo(TrackingEventType.OUT_FOR_DELIVERY)
         assertThat(CarrierEventCodeMapper.typeOf("ATT")).isEqualTo(TrackingEventType.DELIVERY_ATTEMPT_FAILED)
+    }
+
+    @Test
+    fun `maps the arrival at a pickup point`() {
+        assertThat(CarrierEventCodeMapper.typeOf("PPT")).isEqualTo(TrackingEventType.ARRIVED_AT_PICKUP_POINT)
+        assertThat(TrackingEventType.ARRIVED_AT_PICKUP_POINT.resultingStatus).isEqualTo(ParcelStatus.AWAITING_COLLECTION)
     }
 
     @Test
