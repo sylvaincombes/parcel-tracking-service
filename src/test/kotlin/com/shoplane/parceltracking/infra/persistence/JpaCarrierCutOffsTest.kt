@@ -11,20 +11,34 @@ import java.time.LocalTime
 import java.util.Optional
 
 class JpaCarrierCutOffsTest {
-    private val jpa = mockk<CarrierCutOffJpaRepository>()
+    private val jpa = mockk<CarrierCutOffJpaRepository> {
+        every { findById(any()) } returns Optional.empty()
+    }
     private val cutOffs = JpaCarrierCutOffs(jpa)
 
     @Test
-    fun `returns the pick-up cut-off stored for the carrier`() {
-        every { jpa.findById("colisway") } returns Optional.of(CarrierCutOffEntity("colisway", LocalTime.of(17, 0)))
+    fun `returns the pick-up cut-off of the requested weekday`() {
+        storeCutOff("colisway", weekday = 1, LocalTime.of(17, 0))
+        storeCutOff("colisway", weekday = 5, LocalTime.of(14, 30))
 
         assertThat(cutOffs.cutOffFor(COLISWAY, LocalDate.parse("2026-11-16"))).isEqualTo(LocalTime.of(17, 0))
+        assertThat(cutOffs.cutOffFor(COLISWAY, LocalDate.parse("2026-11-20"))).isEqualTo(LocalTime.of(14, 30))
+    }
+
+    @Test
+    fun `a weekday without a stored cut-off has none`() {
+        storeCutOff("colisway", weekday = 1, LocalTime.of(17, 0))
+
+        assertThat(cutOffs.cutOffFor(COLISWAY, LocalDate.parse("2026-11-17"))).isNull()
     }
 
     @Test
     fun `a carrier without a stored cut-off has none`() {
-        every { jpa.findById("parcelwave") } returns Optional.empty()
-
         assertThat(cutOffs.cutOffFor(PARCELWAVE, LocalDate.parse("2026-11-16"))).isNull()
+    }
+
+    private fun storeCutOff(carrierCode: String, weekday: Short, cutOffTime: LocalTime) {
+        val key = CarrierCutOffKey(carrierCode, weekday)
+        every { jpa.findById(key) } returns Optional.of(CarrierCutOffEntity(key, cutOffTime))
     }
 }

@@ -11,12 +11,22 @@ databaseChangeLog:
                   type: varchar(32)
                   constraints:
                     primaryKey: true
+                    primaryKeyName: pk_carrier_cut_off
+                    nullable: false
+              - column:
+                  name: weekday
+                  type: smallint
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_carrier_cut_off
                     nullable: false
               - column:
                   name: cut_off_time
                   type: time
                   constraints:
                     nullable: false
+        - sql:
+            sql: ALTER TABLE carrier_cut_off ADD CONSTRAINT ck_carrier_cut_off_weekday CHECK (weekday BETWEEN 0 AND 6)
       rollback:
         - dropTable:
             tableName: carrier_cut_off

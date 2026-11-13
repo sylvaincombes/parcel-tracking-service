@@ -10,6 +10,8 @@ import java.time.LocalTime
 class JpaCarrierCutOffs(
     private val jpa: CarrierCutOffJpaRepository,
 ) : CarrierCutOffs {
-    override fun cutOffFor(carrier: CarrierCode, day: LocalDate): LocalTime? =
-        jpa.findById(carrier.value).map(CarrierCutOffEntity::cutOffTime).orElse(null)
+    override fun cutOffFor(carrier: CarrierCode, day: LocalDate): LocalTime? {
+        val key = CarrierCutOffKey(carrierCode = carrier.value, weekday = day.dayOfWeek.value.toShort())
+        return jpa.findById(key).map(CarrierCutOffEntity::cutOffTime).orElse(null)
+    }
 }
