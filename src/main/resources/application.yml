@@ -49,6 +49,8 @@ parcel-tracking:
     relay-interval: PT1S
     topics:
       parcel-events: shoplane.parcel-tracking.parcel-events.v1
+  public-tracking:
+    base-url: https://www.shoplane.example/tracking
   late-detection:
     cron: "0 15 * * * *"
     grace-business-days: 1

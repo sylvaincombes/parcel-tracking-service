@@ -4,6 +4,7 @@ import com.shoplane.parceltracking.application.BackOfficeParcelQueries
 import com.shoplane.parceltracking.application.CancelParcelUseCase
 import com.shoplane.parceltracking.application.RegisterParcel
 import com.shoplane.parceltracking.application.RegisterParcelUseCase
+import com.shoplane.parceltracking.application.ShareTrackingLinkUseCase
 import com.shoplane.parceltracking.application.access.BackOfficeActor
 import com.shoplane.parceltracking.domain.carrier.CarrierCode
 import com.shoplane.parceltracking.domain.parcel.OrderReference
@@ -29,6 +30,7 @@ class BackOfficeParcelController(
     private val queries: BackOfficeParcelQueries,
     private val registerParcel: RegisterParcelUseCase,
     private val cancelParcel: CancelParcelUseCase,
+    private val shareTrackingLink: ShareTrackingLinkUseCase,
 ) {
     @GetMapping
     fun list(
@@ -58,4 +60,8 @@ class BackOfficeParcelController(
     @PostMapping("/{parcelId}/cancel")
     fun cancel(actor: BackOfficeActor, @PathVariable parcelId: UUID): ParcelDetailResponse =
         ParcelDetailResponse.from(cancelParcel.cancel(actor, ParcelId(parcelId)))
+
+    @GetMapping("/{parcelId}/share-link")
+    fun shareLink(actor: BackOfficeActor, @PathVariable parcelId: UUID): ShareLinkResponse =
+        ShareLinkResponse(url = shareTrackingLink.linkFor(actor, ParcelId(parcelId)).toString())
 }

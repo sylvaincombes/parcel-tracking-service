@@ -34,3 +34,11 @@ routes:
     methods: [POST]
     path: ^/back-office/v1/parcels/[^/]+/cancel$
     auth: backoffice-session
+
+  - id: backoffice-parcel-share-link
+    methods: [GET]
+    path: ^/back-office/v1/parcels/[^/]+/share-link$
+    auth: none
+    rateLimit:
+      requestsPerMinute: 120
+      key: client-ip

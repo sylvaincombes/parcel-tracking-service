@@ -4,6 +4,7 @@ import com.shoplane.parceltracking.domain.attempt.DeliveryAttemptClassifier
 import com.shoplane.parceltracking.domain.calendar.BusinessCalendar
 import com.shoplane.parceltracking.domain.eta.EtaCalculator
 import com.shoplane.parceltracking.domain.lateness.LateParcelDetector
+import com.shoplane.parceltracking.domain.parcel.PublicTrackingPage
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -21,8 +22,13 @@ data class LateDetectionProperties(
     val graceBusinessDays: Int = 1,
 )
 
+@ConfigurationProperties(prefix = "parcel-tracking.public-tracking")
+data class PublicTrackingProperties(
+    val baseUrl: String,
+)
+
 @Configuration
-@EnableConfigurationProperties(CalendarProperties::class, LateDetectionProperties::class)
+@EnableConfigurationProperties(CalendarProperties::class, LateDetectionProperties::class, PublicTrackingProperties::class)
 class DomainConfig {
     @Bean
     fun clock(): Clock = Clock.systemUTC()
@@ -39,4 +45,7 @@ class DomainConfig {
 
     @Bean
     fun deliveryAttemptClassifier() = DeliveryAttemptClassifier()
+
+    @Bean
+    fun publicTrackingPage(properties: PublicTrackingProperties) = PublicTrackingPage(properties.baseUrl)
 }

@@ -91,3 +91,5 @@ data class ParcelEventResponse(
             )
     }
 }
+
+data class ShareLinkResponse(val url: String)
