@@ -40,5 +40,9 @@ fun aPickedUpParcel(
         record(event(TrackingEventType.PICKED_UP, pickedUpAt), Instant.parse(pickedUpAt))
     }
 
-fun event(type: TrackingEventType, occurredAt: String, location: String? = "Lyon hub") =
-    TrackingEvent(type = type, occurredAt = Instant.parse(occurredAt), location = location)
+fun event(
+    type: TrackingEventType,
+    occurredAt: String,
+    location: String? = "Lyon hub",
+    carrierEventId: String = "evt-${type.name.lowercase()}-$occurredAt",
+) = TrackingEvent(carrierEventId = carrierEventId, type = type, occurredAt = Instant.parse(occurredAt), location = location)

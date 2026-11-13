@@ -46,6 +46,8 @@ class Parcel(
 
     fun timeline(): List<TrackingEvent> = recordedEvents.sortedBy { it.occurredAt }
 
+    fun hasRecorded(carrierEventId: String): Boolean = recordedEvents.any { it.carrierEventId == carrierEventId }
+
     fun record(event: TrackingEvent, now: Instant): ParcelStatusChanged? {
         val next = event.type.resultingStatus
         if (!status.canMoveTo(next)) {

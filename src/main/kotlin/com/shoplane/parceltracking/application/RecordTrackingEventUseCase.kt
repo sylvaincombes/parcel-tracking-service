@@ -14,6 +14,7 @@ import java.time.Clock
 import java.time.Instant
 
 data class RecordTrackingEvent(
+    val carrierEventId: String,
     val carrierCode: CarrierCode,
     val trackingNumber: TrackingNumber,
     val type: TrackingEventType,
@@ -22,7 +23,7 @@ data class RecordTrackingEvent(
     val carrierMessage: String?,
 )
 
-enum class RecordingOutcome { STATUS_CHANGED, RECORDED_WITHOUT_STATUS_CHANGE }
+enum class RecordingOutcome { STATUS_CHANGED, RECORDED_WITHOUT_STATUS_CHANGE, DUPLICATE_IGNORED }
 
 @Service
 class RecordTrackingEventUseCase(
@@ -36,7 +37,11 @@ class RecordTrackingEventUseCase(
         val parcel = parcels.findByTrackingNumber(command.trackingNumber)
             ?.takeIf { it.carrierCode == command.carrierCode }
             ?: throw ParcelNotFoundException(command.trackingNumber.value)
+        if (parcel.hasRecorded(command.carrierEventId)) {
+            return RecordingOutcome.DUPLICATE_IGNORED
+        }
         val event = TrackingEvent(
+            carrierEventId = command.carrierEventId,
             type = command.type,
             occurredAt = command.occurredAt,
             location = command.location,

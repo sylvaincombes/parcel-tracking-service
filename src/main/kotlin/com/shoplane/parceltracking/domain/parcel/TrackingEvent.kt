@@ -14,6 +14,7 @@ enum class TrackingEventType(val resultingStatus: ParcelStatus) {
 }
 
 data class TrackingEvent(
+    val carrierEventId: String,
     val type: TrackingEventType,
     val occurredAt: Instant,
     val location: String?,

@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2026-11-13-add-tracking-event-carrier-event-id
+      author: jonas.weber
+      changes:
+        - addColumn:
+            tableName: tracking_event
+            columns:
+              - column:
+                  name: carrier_event_id
+                  type: varchar(64)
+        - sql:
+            sql: UPDATE tracking_event SET carrier_event_id = 'legacy-' || id WHERE carrier_event_id IS NULL
+        - addNotNullConstraint:
+            tableName: tracking_event
+            columnName: carrier_event_id
+            columnDataType: varchar(64)
+        - addUniqueConstraint:
+            tableName: tracking_event
+            columnNames: parcel_id, carrier_event_id
+            constraintName: uq_tracking_event_parcel_carrier_event
+      rollback:
+        - dropUniqueConstraint:
+            tableName: tracking_event
+            constraintName: uq_tracking_event_parcel_carrier_event
+        - dropColumn:
+            tableName: tracking_event
+            columnName: carrier_event_id

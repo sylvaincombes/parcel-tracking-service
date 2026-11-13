@@ -57,6 +57,7 @@ object ParcelEntityMapper {
         parcel.events.drop(entity.events.size).forEach { event ->
             entity.events += TrackingEventEntity(
                 parcel = entity,
+                carrierEventId = event.carrierEventId,
                 type = event.type,
                 occurredAt = event.occurredAt,
                 location = event.location,
@@ -68,6 +69,7 @@ object ParcelEntityMapper {
 
     private fun toDomainEvent(entity: TrackingEventEntity): TrackingEvent =
         TrackingEvent(
+            carrierEventId = entity.carrierEventId,
             type = entity.type,
             occurredAt = entity.occurredAt,
             location = entity.location,

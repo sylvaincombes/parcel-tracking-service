@@ -36,6 +36,7 @@ class CarrierWebhookController(
         }
         val outcome = recordTrackingEvent.record(
             RecordTrackingEvent(
+                carrierEventId = payload.eventId,
                 carrierCode = CarrierCode(carrierCode),
                 trackingNumber = TrackingNumber.of(payload.trackingNumber),
                 type = type,

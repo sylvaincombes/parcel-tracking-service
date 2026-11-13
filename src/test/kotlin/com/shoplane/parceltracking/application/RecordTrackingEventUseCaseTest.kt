@@ -64,6 +64,18 @@ class RecordTrackingEventUseCaseTest {
     }
 
     @Test
+    fun `a webhook redelivered by the carrier is recorded once`() {
+        useCase.record(command(TrackingEventType.OUT_FOR_DELIVERY, carrierEventId = "evt-50021"))
+        publisher.published.clear()
+
+        val outcome = useCase.record(command(TrackingEventType.OUT_FOR_DELIVERY, carrierEventId = "evt-50021"))
+
+        assertThat(outcome).isEqualTo(RecordingOutcome.DUPLICATE_IGNORED)
+        assertThat(parcels.findById(parcel.id)?.events).hasSize(2)
+        assertThat(publisher.published).isEmpty()
+    }
+
+    @Test
     fun `ignores events sent by another carrier for the same tracking number`() {
         assertThatThrownBy { useCase.record(command(TrackingEventType.OUT_FOR_DELIVERY).copy(carrierCode = PARCELWAVE)) }
             .isInstanceOf(ParcelNotFoundException::class.java)
@@ -74,17 +86,21 @@ class RecordTrackingEventUseCaseTest {
         useCase.record(command(TrackingEventType.OUT_FOR_DELIVERY))
         useCase.record(command(TrackingEventType.DELIVERED))
 
-        assertThatThrownBy { useCase.record(command(TrackingEventType.OUT_FOR_DELIVERY)) }
+        assertThatThrownBy { useCase.record(command(TrackingEventType.OUT_FOR_DELIVERY, carrierEventId = "evt-50388")) }
             .isInstanceOf(IllegalStatusTransitionException::class.java)
     }
 
-    private fun command(type: TrackingEventType, message: String? = null) =
-        RecordTrackingEvent(
-            carrierCode = COLISWAY,
-            trackingNumber = TrackingNumber.of("CW4400112233FR"),
-            type = type,
-            occurredAt = Instant.parse("2026-11-04T09:15:00Z"),
-            location = "Villeurbanne",
-            carrierMessage = message,
-        )
+    private fun command(
+        type: TrackingEventType,
+        message: String? = null,
+        carrierEventId: String = "evt-${type.name.lowercase()}",
+    ) = RecordTrackingEvent(
+        carrierEventId = carrierEventId,
+        carrierCode = COLISWAY,
+        trackingNumber = TrackingNumber.of("CW4400112233FR"),
+        type = type,
+        occurredAt = Instant.parse("2026-11-04T09:15:00Z"),
+        location = "Villeurbanne",
+        carrierMessage = message,
+    )
 }

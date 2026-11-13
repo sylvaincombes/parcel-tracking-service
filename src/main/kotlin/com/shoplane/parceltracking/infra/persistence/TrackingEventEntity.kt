@@ -21,6 +21,8 @@ class TrackingEventEntity(
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "parcel_id", nullable = false, updatable = false)
     val parcel: ParcelEntity,
+    @Column(name = "carrier_event_id", nullable = false, updatable = false)
+    val carrierEventId: String,
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, updatable = false)
     val type: TrackingEventType,
