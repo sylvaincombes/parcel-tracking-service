@@ -60,7 +60,7 @@ class RecordTrackingEventUseCaseTest {
         useCase.record(command(TrackingEventType.DELIVERY_ATTEMPT_FAILED, message = "Recipient absent, notice left"))
 
         assertThat(parcels.findById(parcel.id)?.events?.last()?.attemptReason)
-            .isEqualTo(DeliveryAttemptReason.RECIPIENT_ABSENT)
+            .isEqualTo(DeliveryAttemptReason.CUSTOMER_NOT_HOME)
     }
 
     @Test

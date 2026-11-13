@@ -4,7 +4,7 @@ enum class DeliveryAttemptReason {
     REFUSED_BY_RECIPIENT,
     ADDRESS_ISSUE,
     BUSINESS_CLOSED,
-    RECIPIENT_ABSENT,
+    CUSTOMER_NOT_HOME,
     OTHER,
 }
 
@@ -14,7 +14,7 @@ class DeliveryAttemptClassifier {
             Rule(DeliveryAttemptReason.REFUSED_BY_RECIPIENT, "refused", "refusé", "declined by recipient"),
             Rule(DeliveryAttemptReason.ADDRESS_ISSUE, "address", "adresse", "postal code", "zip code", "unknown street"),
             Rule(DeliveryAttemptReason.BUSINESS_CLOSED, "closed", "fermé", "business hours"),
-            Rule(DeliveryAttemptReason.RECIPIENT_ABSENT, "absent", "not at home", "nobody", "no one home"),
+            Rule(DeliveryAttemptReason.CUSTOMER_NOT_HOME, "absent", "not at home", "nobody", "no one home"),
         )
 
     fun classify(carrierMessage: String): DeliveryAttemptReason {
