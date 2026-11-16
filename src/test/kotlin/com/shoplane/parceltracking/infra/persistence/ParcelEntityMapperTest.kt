@@ -3,6 +3,7 @@ package com.shoplane.parceltracking.infra.persistence
 import com.shoplane.parceltracking.domain.parcel.ParcelStatus
 import com.shoplane.parceltracking.domain.parcel.TrackingEventType
 import com.shoplane.parceltracking.fixtures.aPickedUpParcel
+import com.shoplane.parceltracking.fixtures.aRegisteredParcel
 import com.shoplane.parceltracking.fixtures.event
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -21,6 +22,15 @@ class ParcelEntityMapperTest {
         assertThat(restored.status).isEqualTo(ParcelStatus.PICKED_UP)
         assertThat(restored.pickedUpOn).isEqualTo(parcel.pickedUpOn)
         assertThat(restored.events).isEqualTo(parcel.events)
+    }
+
+    @Test
+    fun `the declared value survives a round trip through its entity`() {
+        val parcel = aRegisteredParcel(declaredValueCents = 12_990)
+
+        val restored = ParcelEntityMapper.toDomain(ParcelEntityMapper.toNewEntity(parcel, now))
+
+        assertThat(restored.declaredValueCents).isEqualTo(12_990)
     }
 
     @Test

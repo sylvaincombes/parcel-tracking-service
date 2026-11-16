@@ -3,6 +3,7 @@ package com.shoplane.parceltracking.presentation.backoffice
 import com.shoplane.parceltracking.domain.parcel.Parcel
 import com.shoplane.parceltracking.domain.parcel.TrackingEvent
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.PositiveOrZero
 import jakarta.validation.constraints.Size
 import java.time.Instant
 import java.time.LocalDate
@@ -17,6 +18,8 @@ data class RegisterParcelRequest(
     val orderReference: String,
     @field:Size(max = 500)
     val deliveryInstructions: String? = null,
+    @field:PositiveOrZero
+    val declaredValueCents: Long? = null,
 )
 
 data class ParcelSummaryResponse(
@@ -50,6 +53,7 @@ data class ParcelDetailResponse(
     val orderReference: String,
     val status: String,
     val deliveryInstructions: String?,
+    val declaredValueCents: Long?,
     val pickedUpOn: LocalDate?,
     val deliveredAt: Instant?,
     val lateDetectedAt: Instant?,
@@ -66,6 +70,7 @@ data class ParcelDetailResponse(
                 orderReference = parcel.orderReference.value,
                 status = parcel.status.name,
                 deliveryInstructions = parcel.deliveryInstructions,
+                declaredValueCents = parcel.declaredValueCents,
                 pickedUpOn = parcel.pickedUpOn,
                 deliveredAt = parcel.deliveredAt,
                 lateDetectedAt = parcel.lateDetectedAt,

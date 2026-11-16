@@ -20,6 +20,7 @@ fun aRegisteredParcel(
     orderReference: String = "SO-2026-118734",
     registeredAt: String = "2026-11-02T08:30:00Z",
     deliveryInstructions: String? = null,
+    declaredValueCents: Long? = null,
 ) = Parcel(
     id = ParcelId.generate(),
     trackingNumber = TrackingNumber.of(trackingNumber),
@@ -28,6 +29,7 @@ fun aRegisteredParcel(
     orderReference = OrderReference(orderReference),
     registeredAt = Instant.parse(registeredAt),
     deliveryInstructions = deliveryInstructions,
+    declaredValueCents = declaredValueCents,
 )
 
 fun aPickedUpParcel(

@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2026-11-16-add-parcel-declared-value
+      author: tomas.ortega
+      changes:
+        - addColumn:
+            tableName: parcel
+            columns:
+              - column:
+                  name: declared_value_cents
+                  type: bigint
+      rollback:
+        - dropColumn:
+            tableName: parcel
+            columnName: declared_value_cents

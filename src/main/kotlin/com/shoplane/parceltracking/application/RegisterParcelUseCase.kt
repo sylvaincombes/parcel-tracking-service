@@ -20,6 +20,7 @@ data class RegisterParcel(
     val carrierCode: CarrierCode,
     val orderReference: OrderReference,
     val deliveryInstructions: String?,
+    val declaredValueCents: Long? = null,
 )
 
 @Service
@@ -45,6 +46,7 @@ class RegisterParcelUseCase(
             sellerId = sellerId,
             orderReference = command.orderReference,
             deliveryInstructions = command.deliveryInstructions,
+            declaredValueCents = command.declaredValueCents,
             now = clock.instant(),
         )
         return parcels.save(parcel)
