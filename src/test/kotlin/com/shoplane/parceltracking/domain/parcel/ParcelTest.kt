@@ -81,12 +81,12 @@ class ParcelTest {
     }
 
     @Test
-    fun `timeline is ordered by carrier event time, not by arrival`() {
+    fun `events are listed in chronological order even when a carrier reports them out of order`() {
         val parcel = aPickedUpParcel(pickedUpAt = "2026-11-02T14:00:00Z")
         parcel.record(event(TrackingEventType.OUT_FOR_DELIVERY, "2026-11-04T06:10:00Z"), now)
         parcel.record(event(TrackingEventType.IN_TRANSIT, "2026-11-03T02:00:00Z"), now)
 
-        assertThat(parcel.timeline().map { it.type }).containsExactly(
+        assertThat(parcel.events.map { it.type }).containsExactly(
             TrackingEventType.PICKED_UP,
             TrackingEventType.IN_TRANSIT,
             TrackingEventType.OUT_FOR_DELIVERY,

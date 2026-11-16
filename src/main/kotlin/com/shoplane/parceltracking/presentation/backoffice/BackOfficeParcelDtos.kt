@@ -70,7 +70,7 @@ data class ParcelDetailResponse(
                 deliveredAt = parcel.deliveredAt,
                 lateDetectedAt = parcel.lateDetectedAt,
                 registeredAt = parcel.registeredAt,
-                events = parcel.timeline().map(ParcelEventResponse::from),
+                events = parcel.events.map(ParcelEventResponse::from),
             )
     }
 }

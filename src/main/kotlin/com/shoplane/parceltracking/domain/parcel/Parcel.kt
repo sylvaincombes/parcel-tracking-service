@@ -39,12 +39,10 @@ class Parcel(
     private val recordedEvents: MutableList<TrackingEvent> = events.toMutableList()
 
     val events: List<TrackingEvent>
-        get() = recordedEvents.toList()
+        get() = recordedEvents.sortedBy { it.occurredAt }
 
     val isLate: Boolean
         get() = lateDetectedAt != null
-
-    fun timeline(): List<TrackingEvent> = recordedEvents.sortedBy { it.occurredAt }
 
     fun record(event: TrackingEvent, now: Instant): ParcelStatusChanged? {
         val next = event.type.resultingStatus

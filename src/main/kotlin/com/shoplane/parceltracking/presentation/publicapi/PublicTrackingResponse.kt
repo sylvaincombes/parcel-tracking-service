@@ -23,7 +23,7 @@ data class PublicTrackingResponse(
                 carrierTrackingUrl = tracking.carrierTrackingLink?.toString(),
                 estimatedDelivery = tracking.estimate?.let { EstimatedDeliveryResponse(it.earliest, it.latest) },
                 deliveredAt = parcel.deliveredAt,
-                events = parcel.timeline().reversed().map {
+                events = parcel.events.reversed().map {
                     PublicTrackingEventResponse(type = it.type.name, occurredAt = it.occurredAt, location = it.location)
                 },
             )
