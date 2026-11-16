@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2026-11-16-rename-parcel-delivery-instructions
+      author: camille.arnaud
+      changes:
+        - renameColumn:
+            tableName: parcel
+            oldColumnName: delivery_instructions
+            newColumnName: courier_instructions
+            columnDataType: varchar(500)
+      rollback:
+        - renameColumn:
+            tableName: parcel
+            oldColumnName: courier_instructions
+            newColumnName: delivery_instructions
+            columnDataType: varchar(500)

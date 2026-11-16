@@ -31,7 +31,7 @@ class ParcelEntity(
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     var status: ParcelStatus,
-    @Column(name = "delivery_instructions")
+    @Column(name = "courier_instructions")
     var deliveryInstructions: String?,
     @Column(name = "picked_up_on")
     var pickedUpOn: LocalDate?,
