@@ -38,6 +38,7 @@ class ParcelTest {
         assertThat(parcel.pickedUpOn).isEqualTo(LocalDate.parse("2026-11-02"))
         assertThat(change?.previousStatus).isEqualTo(ParcelStatus.REGISTERED)
         assertThat(change?.currentStatus).isEqualTo(ParcelStatus.PICKED_UP)
+        assertThat(change?.carrierCode).isEqualTo(CarrierCode("colisway"))
     }
 
     @Test

@@ -84,6 +84,7 @@ class Parcel(
         return ParcelStatusChanged(
             parcelId = id,
             trackingNumber = trackingNumber,
+            carrierCode = carrierCode,
             sellerId = sellerId,
             previousStatus = previous,
             currentStatus = next,

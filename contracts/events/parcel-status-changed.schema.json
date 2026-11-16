@@ -8,6 +8,7 @@
   "properties": {
     "parcelId": { "type": "string", "format": "uuid" },
     "trackingNumber": { "type": "string", "pattern": "^[A-Z0-9]{8,30}$" },
+    "carrierCode": { "type": "string", "pattern": "^[a-z][a-z0-9-]{1,31}$" },
     "sellerId": { "type": "integer", "minimum": 1 },
     "previousStatus": { "$ref": "#/$defs/status" },
     "currentStatus": { "$ref": "#/$defs/status" },

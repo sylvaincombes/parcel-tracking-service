@@ -9,6 +9,7 @@ import java.time.LocalDate
 data class ParcelStatusChangedPayload(
     val parcelId: String,
     val trackingNumber: String,
+    val carrier: String,
     val sellerId: Long,
     val previousStatus: String,
     val currentStatus: String,
@@ -36,6 +37,7 @@ object ParcelEventPayloads {
                 ParcelStatusChangedPayload(
                     parcelId = event.parcelId.toString(),
                     trackingNumber = event.trackingNumber.value,
+                    carrier = event.carrierCode.value,
                     sellerId = event.sellerId.value,
                     previousStatus = event.previousStatus.name,
                     currentStatus = event.currentStatus.name,

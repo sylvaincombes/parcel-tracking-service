@@ -4,6 +4,7 @@ import com.shoplane.parceltracking.domain.event.ParcelStatusChanged
 import com.shoplane.parceltracking.domain.parcel.ParcelId
 import com.shoplane.parceltracking.domain.parcel.ParcelStatus
 import com.shoplane.parceltracking.domain.parcel.TrackingNumber
+import com.shoplane.parceltracking.fixtures.COLISWAY
 import com.shoplane.parceltracking.fixtures.GARDEN_TOOLS_SELLER
 import com.shoplane.parceltracking.fixtures.fixedClockAt
 import io.mockk.every
@@ -35,6 +36,7 @@ class OutboxParcelEventPublisherTest {
             ParcelStatusChanged(
                 parcelId = parcelId,
                 trackingNumber = TrackingNumber.of("CW4400112233FR"),
+                carrierCode = COLISWAY,
                 sellerId = GARDEN_TOOLS_SELLER,
                 previousStatus = ParcelStatus.OUT_FOR_DELIVERY,
                 currentStatus = ParcelStatus.DELIVERED,
@@ -48,6 +50,7 @@ class OutboxParcelEventPublisherTest {
         assertThat(stored.captured.payload)
             .contains("\"currentStatus\":\"DELIVERED\"")
             .contains("\"trackingNumber\":\"CW4400112233FR\"")
+            .contains("\"carrier\":\"colisway\"")
         assertThat(stored.captured.publishedAt).isNull()
     }
 }

@@ -1,5 +1,6 @@
 package com.shoplane.parceltracking.domain.event
 
+import com.shoplane.parceltracking.domain.carrier.CarrierCode
 import com.shoplane.parceltracking.domain.parcel.ParcelId
 import com.shoplane.parceltracking.domain.parcel.ParcelStatus
 import com.shoplane.parceltracking.domain.parcel.SellerId
@@ -16,6 +17,7 @@ sealed interface ParcelDomainEvent {
 data class ParcelStatusChanged(
     override val parcelId: ParcelId,
     val trackingNumber: TrackingNumber,
+    val carrierCode: CarrierCode,
     override val sellerId: SellerId,
     val previousStatus: ParcelStatus,
     val currentStatus: ParcelStatus,
