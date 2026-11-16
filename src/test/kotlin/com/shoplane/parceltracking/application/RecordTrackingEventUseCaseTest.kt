@@ -64,6 +64,18 @@ class RecordTrackingEventUseCaseTest {
     }
 
     @Test
+    fun `records a failed delivery attempt with an unrecognized message as other`() {
+        useCase.record(command(TrackingEventType.OUT_FOR_DELIVERY))
+
+        val outcome = useCase.record(
+            command(TrackingEventType.DELIVERY_ATTEMPT_FAILED, message = "Parcel damaged at the depot, new attempt scheduled"),
+        )
+
+        assertThat(outcome).isEqualTo(RecordingOutcome.STATUS_CHANGED)
+        assertThat(parcels.findById(parcel.id)?.events?.last()?.attemptReason).isEqualTo(DeliveryAttemptReason.OTHER)
+    }
+
+    @Test
     fun `ignores events sent by another carrier for the same tracking number`() {
         assertThatThrownBy { useCase.record(command(TrackingEventType.OUT_FOR_DELIVERY).copy(carrierCode = PARCELWAVE)) }
             .isInstanceOf(ParcelNotFoundException::class.java)

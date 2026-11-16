@@ -1,6 +1,7 @@
 package com.shoplane.parceltracking.application
 
 import com.shoplane.parceltracking.domain.attempt.DeliveryAttemptClassifier
+import com.shoplane.parceltracking.domain.attempt.DeliveryAttemptReason
 import com.shoplane.parceltracking.domain.carrier.CarrierCode
 import com.shoplane.parceltracking.domain.event.ParcelEventPublisher
 import com.shoplane.parceltracking.domain.parcel.ParcelNotFoundException
@@ -50,7 +51,8 @@ class RecordTrackingEventUseCase(
 
     private fun attemptReasonOf(command: RecordTrackingEvent) =
         if (command.type == TrackingEventType.DELIVERY_ATTEMPT_FAILED) {
-            attemptClassifier.classify(command.carrierMessage.orEmpty())
+            runCatching { attemptClassifier.classify(command.carrierMessage.orEmpty()) }
+                .getOrDefault(DeliveryAttemptReason.OTHER)
         } else {
             null
         }
