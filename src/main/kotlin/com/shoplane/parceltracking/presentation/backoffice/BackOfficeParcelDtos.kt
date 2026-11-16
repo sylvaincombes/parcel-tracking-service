@@ -19,6 +19,11 @@ data class RegisterParcelRequest(
     val deliveryInstructions: String? = null,
 )
 
+data class UpdateDeliveryInstructionsRequest(
+    @field:Size(max = 500)
+    val deliveryInstructions: String?,
+)
+
 data class ParcelSummaryResponse(
     val parcelId: String,
     val trackingNumber: String,

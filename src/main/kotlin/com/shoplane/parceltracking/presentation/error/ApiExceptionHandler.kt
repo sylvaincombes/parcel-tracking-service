@@ -3,6 +3,7 @@ package com.shoplane.parceltracking.presentation.error
 import com.shoplane.parceltracking.application.access.AccessDeniedException
 import com.shoplane.parceltracking.domain.carrier.RetiredCarrierException
 import com.shoplane.parceltracking.domain.carrier.UnknownCarrierException
+import com.shoplane.parceltracking.domain.parcel.DeliveryInstructionsLockedException
 import com.shoplane.parceltracking.domain.parcel.DuplicateTrackingNumberException
 import com.shoplane.parceltracking.domain.parcel.IllegalStatusTransitionException
 import com.shoplane.parceltracking.domain.parcel.ParcelNotFoundException
@@ -33,6 +34,10 @@ class ApiExceptionHandler {
     @ExceptionHandler(IllegalStatusTransitionException::class)
     fun illegalTransition(exception: IllegalStatusTransitionException) =
         error(HttpStatus.CONFLICT, "illegal_status_transition", exception)
+
+    @ExceptionHandler(DeliveryInstructionsLockedException::class)
+    fun instructionsLocked(exception: DeliveryInstructionsLockedException) =
+        error(HttpStatus.CONFLICT, "delivery_instructions_locked", exception)
 
     @ExceptionHandler(DuplicateTrackingNumberException::class)
     fun duplicate(exception: DuplicateTrackingNumberException) =

@@ -14,6 +14,9 @@ enum class ParcelStatus {
     val isTerminal: Boolean
         get() = this == DELIVERED || this == RETURNED_TO_SENDER || this == CANCELLED
 
+    val acceptsDeliveryInstructions: Boolean
+        get() = this == REGISTERED || this == PICKED_UP || this == IN_TRANSIT || this == DELIVERY_FAILED
+
     fun canMoveTo(next: ParcelStatus): Boolean = next in allowedNextStatuses()
 
     private fun allowedNextStatuses(): Set<ParcelStatus> =

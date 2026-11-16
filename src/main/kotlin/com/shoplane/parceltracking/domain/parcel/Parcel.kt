@@ -68,6 +68,13 @@ class Parcel(
         return requireNotNull(moveTo(ParcelStatus.CANCELLED, now))
     }
 
+    fun changeDeliveryInstructions(instructions: String?) {
+        if (!status.acceptsDeliveryInstructions) {
+            throw DeliveryInstructionsLockedException(id, status)
+        }
+        deliveryInstructions = normalizedInstructions(instructions)
+    }
+
     fun markLate(now: Instant) {
         check(!status.isTerminal) { "Parcel $id is already $status" }
         if (lateDetectedAt == null) {
@@ -107,7 +114,9 @@ class Parcel(
                 sellerId = sellerId,
                 orderReference = orderReference,
                 registeredAt = now,
-                deliveryInstructions = deliveryInstructions?.trim()?.takeIf { it.isNotEmpty() },
+                deliveryInstructions = normalizedInstructions(deliveryInstructions),
             )
+
+        private fun normalizedInstructions(instructions: String?): String? = instructions?.trim()?.takeIf { it.isNotEmpty() }
     }
 }
