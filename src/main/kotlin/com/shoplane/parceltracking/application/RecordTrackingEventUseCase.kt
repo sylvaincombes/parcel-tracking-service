@@ -8,6 +8,8 @@ import com.shoplane.parceltracking.domain.parcel.ParcelRepository
 import com.shoplane.parceltracking.domain.parcel.TrackingEvent
 import com.shoplane.parceltracking.domain.parcel.TrackingEventType
 import com.shoplane.parceltracking.domain.parcel.TrackingNumber
+import org.slf4j.LoggerFactory
+import org.springframework.dao.OptimisticLockingFailureException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Clock
@@ -33,6 +35,17 @@ class RecordTrackingEventUseCase(
 ) {
     @Transactional
     fun record(command: RecordTrackingEvent): RecordingOutcome {
+        repeat(MAX_ATTEMPTS - 1) {
+            try {
+                return recordOnce(command)
+            } catch (_: OptimisticLockingFailureException) {
+                logger.debug("Concurrent update of parcel {}, retrying", command.trackingNumber)
+            }
+        }
+        return recordOnce(command)
+    }
+
+    private fun recordOnce(command: RecordTrackingEvent): RecordingOutcome {
         val parcel = parcels.findByTrackingNumber(command.trackingNumber)
             ?.takeIf { it.carrierCode == command.carrierCode }
             ?: throw ParcelNotFoundException(command.trackingNumber.value)
@@ -54,4 +67,9 @@ class RecordTrackingEventUseCase(
         } else {
             null
         }
+
+    private companion object {
+        const val MAX_ATTEMPTS = 3
+        val logger = LoggerFactory.getLogger(RecordTrackingEventUseCase::class.java)
+    }
 }

@@ -4,7 +4,9 @@ import com.shoplane.parceltracking.domain.attempt.DeliveryAttemptClassifier
 import com.shoplane.parceltracking.domain.attempt.DeliveryAttemptReason
 import com.shoplane.parceltracking.domain.event.ParcelStatusChanged
 import com.shoplane.parceltracking.domain.parcel.IllegalStatusTransitionException
+import com.shoplane.parceltracking.domain.parcel.Parcel
 import com.shoplane.parceltracking.domain.parcel.ParcelNotFoundException
+import com.shoplane.parceltracking.domain.parcel.ParcelRepository
 import com.shoplane.parceltracking.domain.parcel.ParcelStatus
 import com.shoplane.parceltracking.domain.parcel.TrackingEventType
 import com.shoplane.parceltracking.domain.parcel.TrackingNumber
@@ -17,6 +19,8 @@ import com.shoplane.parceltracking.fixtures.fixedClockAt
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import org.springframework.dao.OptimisticLockingFailureException
+import org.springframework.orm.ObjectOptimisticLockingFailureException
 import java.time.Instant
 
 class RecordTrackingEventUseCaseTest {
@@ -78,6 +82,31 @@ class RecordTrackingEventUseCaseTest {
             .isInstanceOf(IllegalStatusTransitionException::class.java)
     }
 
+    @Test
+    fun `retries after a concurrent update and publishes the status change once`() {
+        val useCase = useCaseOn(ConcurrentlyUpdatedParcels(parcels, conflictingSaves = 1))
+
+        val outcome = useCase.record(command(TrackingEventType.OUT_FOR_DELIVERY))
+
+        assertThat(outcome).isEqualTo(RecordingOutcome.STATUS_CHANGED)
+        assertThat(parcels.findById(parcel.id)?.status).isEqualTo(ParcelStatus.OUT_FOR_DELIVERY)
+        assertThat(parcels.findById(parcel.id)?.events).hasSize(2)
+        assertThat(publisher.published).hasSize(1)
+    }
+
+    @Test
+    fun `gives up after three concurrent updates`() {
+        val useCase = useCaseOn(ConcurrentlyUpdatedParcels(parcels, conflictingSaves = 3))
+
+        assertThatThrownBy { useCase.record(command(TrackingEventType.OUT_FOR_DELIVERY)) }
+            .isInstanceOf(OptimisticLockingFailureException::class.java)
+        assertThat(parcels.findById(parcel.id)?.status).isEqualTo(ParcelStatus.PICKED_UP)
+        assertThat(publisher.published).isEmpty()
+    }
+
+    private fun useCaseOn(repository: ParcelRepository) =
+        RecordTrackingEventUseCase(repository, publisher, DeliveryAttemptClassifier(), fixedClockAt("2026-11-04T12:00:00Z"))
+
     private fun command(type: TrackingEventType, message: String? = null) =
         RecordTrackingEvent(
             carrierCode = COLISWAY,
@@ -87,4 +116,17 @@ class RecordTrackingEventUseCaseTest {
             location = "Villeurbanne",
             carrierMessage = message,
         )
+}
+
+private class ConcurrentlyUpdatedParcels(
+    private val delegate: InMemoryParcelRepository,
+    private var conflictingSaves: Int,
+) : ParcelRepository by delegate {
+    override fun save(parcel: Parcel): Parcel {
+        if (conflictingSaves > 0) {
+            conflictingSaves--
+            throw ObjectOptimisticLockingFailureException(Parcel::class.java, parcel.id.value)
+        }
+        return delegate.save(parcel)
+    }
 }
