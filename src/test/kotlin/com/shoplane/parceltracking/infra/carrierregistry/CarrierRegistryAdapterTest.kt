@@ -46,6 +46,25 @@ class CarrierRegistryAdapterTest {
     }
 
     @Test
+    fun `lists the active carriers in registry order`() {
+        every { client.listCarriers("ACTIVE") } returns listOf(
+            activeColisway(),
+            CarrierDto(
+                code = "parcelino",
+                displayName = "Parcelino",
+                trackingUrlTemplate = "https://parcelino.example/suivi/{trackingNumber}",
+                transitDays = TransitDaysDto(2, 3),
+                status = CarrierStatusDto.ACTIVE,
+            ),
+        )
+
+        val carriers = adapter.activeCarriers()
+
+        assertThat(carriers.map { it.code }).containsExactly(CarrierCode("colisway"), CarrierCode("parcelino"))
+        assertThat(carriers.map { it.displayName }).containsExactly("Colisway", "Parcelino")
+    }
+
+    @Test
     fun `a carrier unknown to the registry is absent`() {
         every { client.getCarrier("speedyship") } throws notFound()
 

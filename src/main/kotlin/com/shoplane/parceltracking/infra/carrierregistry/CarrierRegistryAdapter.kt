@@ -21,8 +21,13 @@ class CarrierRegistryAdapter(
             null
         }
 
+    @Cacheable(cacheNames = [ACTIVE_CARRIERS_CACHE])
+    override fun activeCarriers(): List<Carrier> =
+        client.listCarriers(CarrierStatusDto.ACTIVE.name).map(::toDomain)
+
     companion object {
         const val CARRIERS_CACHE = "carriers"
+        const val ACTIVE_CARRIERS_CACHE = "active-carriers"
 
         fun toDomain(dto: CarrierDto): Carrier =
             Carrier(

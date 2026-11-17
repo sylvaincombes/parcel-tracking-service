@@ -25,7 +25,7 @@ spring:
       properties:
         enable.idempotence: true
   cache:
-    cache-names: carriers
+    cache-names: carriers, active-carriers
     caffeine:
       spec: maximumSize=500,expireAfterWrite=10m
   cloud:
