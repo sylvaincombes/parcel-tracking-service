@@ -1,5 +1,6 @@
 package com.shoplane.parceltracking.presentation.backoffice
 
+import com.shoplane.parceltracking.application.ParcelDetail
 import com.shoplane.parceltracking.domain.parcel.Parcel
 import com.shoplane.parceltracking.domain.parcel.TrackingEvent
 import jakarta.validation.constraints.NotBlank
@@ -49,6 +50,7 @@ data class ParcelDetailResponse(
     val sellerId: Long,
     val orderReference: String,
     val status: String,
+    val carrierTrackingUrl: String?,
     val deliveryInstructions: String?,
     val pickedUpOn: LocalDate?,
     val deliveredAt: Instant?,
@@ -57,7 +59,9 @@ data class ParcelDetailResponse(
     val events: List<ParcelEventResponse>,
 ) {
     companion object {
-        fun from(parcel: Parcel) =
+        fun from(detail: ParcelDetail) = from(detail.parcel, detail.carrierTrackingLink?.toString())
+
+        fun from(parcel: Parcel, carrierTrackingUrl: String? = null) =
             ParcelDetailResponse(
                 parcelId = parcel.id.toString(),
                 trackingNumber = parcel.trackingNumber.value,
@@ -65,6 +69,7 @@ data class ParcelDetailResponse(
                 sellerId = parcel.sellerId.value,
                 orderReference = parcel.orderReference.value,
                 status = parcel.status.name,
+                carrierTrackingUrl = carrierTrackingUrl,
                 deliveryInstructions = parcel.deliveryInstructions,
                 pickedUpOn = parcel.pickedUpOn,
                 deliveredAt = parcel.deliveredAt,
