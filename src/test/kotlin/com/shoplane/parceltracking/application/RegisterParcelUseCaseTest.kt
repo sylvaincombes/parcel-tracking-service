@@ -23,7 +23,6 @@ import com.shoplane.parceltracking.fixtures.fixedClockAt
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
-import java.math.BigDecimal
 
 class RegisterParcelUseCaseTest {
     private val parcels = InMemoryParcelRepository()
@@ -44,7 +43,7 @@ class RegisterParcelUseCaseTest {
 
     @Test
     fun `keeps the dimensions declared by the seller`() {
-        val dimensions = ParcelDimensions(BigDecimal("2.350"), BigDecimal("40.0"), BigDecimal("30.0"), BigDecimal("12.5"))
+        val dimensions = ParcelDimensions(weightGrams = 2350, lengthMm = 400, widthMm = 300, heightMm = 125)
 
         val parcel = useCase.register(aSellerAdmin(), command().copy(dimensions = dimensions))
 

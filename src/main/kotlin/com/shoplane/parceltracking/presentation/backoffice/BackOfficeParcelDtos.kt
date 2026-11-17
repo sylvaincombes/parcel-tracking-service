@@ -4,10 +4,9 @@ import com.shoplane.parceltracking.domain.parcel.Parcel
 import com.shoplane.parceltracking.domain.parcel.ParcelDimensions
 import com.shoplane.parceltracking.domain.parcel.TrackingEvent
 import jakarta.validation.Valid
-import jakarta.validation.constraints.DecimalMin
+import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
-import java.math.BigDecimal
 import java.time.Instant
 import java.time.LocalDate
 
@@ -26,24 +25,24 @@ data class RegisterParcelRequest(
 )
 
 data class ParcelDimensionsPayload(
-    @field:DecimalMin("0.001")
-    val weightKg: BigDecimal,
-    @field:DecimalMin("0.1")
-    val lengthCm: BigDecimal,
-    @field:DecimalMin("0.1")
-    val widthCm: BigDecimal,
-    @field:DecimalMin("0.1")
-    val heightCm: BigDecimal,
+    @field:Min(1)
+    val weightGrams: Int,
+    @field:Min(1)
+    val lengthMm: Int,
+    @field:Min(1)
+    val widthMm: Int,
+    @field:Min(1)
+    val heightMm: Int,
 ) {
-    fun toDomain() = ParcelDimensions(weightKg = weightKg, lengthCm = lengthCm, widthCm = widthCm, heightCm = heightCm)
+    fun toDomain() = ParcelDimensions(weightGrams = weightGrams, lengthMm = lengthMm, widthMm = widthMm, heightMm = heightMm)
 
     companion object {
         fun from(dimensions: ParcelDimensions) =
             ParcelDimensionsPayload(
-                weightKg = dimensions.weightKg,
-                lengthCm = dimensions.lengthCm,
-                widthCm = dimensions.widthCm,
-                heightCm = dimensions.heightCm,
+                weightGrams = dimensions.weightGrams,
+                lengthMm = dimensions.lengthMm,
+                widthMm = dimensions.widthMm,
+                heightMm = dimensions.heightMm,
             )
     }
 }

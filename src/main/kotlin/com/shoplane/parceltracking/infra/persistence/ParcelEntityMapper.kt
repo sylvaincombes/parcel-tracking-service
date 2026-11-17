@@ -41,10 +41,10 @@ object ParcelEntityMapper {
             pickedUpOn = parcel.pickedUpOn,
             deliveredAt = parcel.deliveredAt,
             lateDetectedAt = parcel.lateDetectedAt,
-            weightKg = parcel.dimensions?.weightKg,
-            lengthCm = parcel.dimensions?.lengthCm,
-            widthCm = parcel.dimensions?.widthCm,
-            heightCm = parcel.dimensions?.heightCm,
+            weightGrams = parcel.dimensions?.weightGrams,
+            lengthMm = parcel.dimensions?.lengthMm,
+            widthMm = parcel.dimensions?.widthMm,
+            heightMm = parcel.dimensions?.heightMm,
             registeredAt = parcel.registeredAt,
             updatedAt = now,
         ).also { appendNewEvents(it, parcel, now) }
@@ -73,12 +73,12 @@ object ParcelEntityMapper {
     }
 
     private fun dimensionsOf(entity: ParcelEntity): ParcelDimensions? {
-        val weight = entity.weightKg ?: return null
+        val weight = entity.weightGrams ?: return null
         return ParcelDimensions(
-            weightKg = weight,
-            lengthCm = requireNotNull(entity.lengthCm),
-            widthCm = requireNotNull(entity.widthCm),
-            heightCm = requireNotNull(entity.heightCm),
+            weightGrams = weight,
+            lengthMm = requireNotNull(entity.lengthMm),
+            widthMm = requireNotNull(entity.widthMm),
+            heightMm = requireNotNull(entity.heightMm),
         )
     }
 

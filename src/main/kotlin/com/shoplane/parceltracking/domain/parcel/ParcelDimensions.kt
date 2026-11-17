@@ -1,15 +1,13 @@
 package com.shoplane.parceltracking.domain.parcel
 
-import java.math.BigDecimal
-
 data class ParcelDimensions(
-    val weightKg: BigDecimal,
-    val lengthCm: BigDecimal,
-    val widthCm: BigDecimal,
-    val heightCm: BigDecimal,
+    val weightGrams: Int,
+    val lengthMm: Int,
+    val widthMm: Int,
+    val heightMm: Int,
 ) {
     init {
-        require(listOf(weightKg, lengthCm, widthCm, heightCm).all { it.signum() > 0 }) {
+        require(listOf(weightGrams, lengthMm, widthMm, heightMm).all { it > 0 }) {
             "Parcel dimensions must be positive"
         }
     }
