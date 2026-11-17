@@ -51,6 +51,7 @@ class BackOfficeParcelController(
             carrierCode = CarrierCode(request.carrierCode),
             orderReference = OrderReference(request.orderReference),
             deliveryInstructions = request.deliveryInstructions,
+            sellerId = request.sellerId?.let(::SellerId),
         )
         return ParcelDetailResponse.from(registerParcel.register(actor, command))
     }

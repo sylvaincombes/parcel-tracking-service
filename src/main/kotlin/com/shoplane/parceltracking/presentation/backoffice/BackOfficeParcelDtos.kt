@@ -17,6 +17,7 @@ data class RegisterParcelRequest(
     val orderReference: String,
     @field:Size(max = 500)
     val deliveryInstructions: String? = null,
+    val sellerId: Long? = null,
 )
 
 data class ParcelSummaryResponse(

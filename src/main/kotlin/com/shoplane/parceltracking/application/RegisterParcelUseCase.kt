@@ -10,6 +10,7 @@ import com.shoplane.parceltracking.domain.parcel.DuplicateTrackingNumberExceptio
 import com.shoplane.parceltracking.domain.parcel.OrderReference
 import com.shoplane.parceltracking.domain.parcel.Parcel
 import com.shoplane.parceltracking.domain.parcel.ParcelRepository
+import com.shoplane.parceltracking.domain.parcel.SellerId
 import com.shoplane.parceltracking.domain.parcel.TrackingNumber
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -20,6 +21,7 @@ data class RegisterParcel(
     val carrierCode: CarrierCode,
     val orderReference: OrderReference,
     val deliveryInstructions: String?,
+    val sellerId: SellerId?,
 )
 
 @Service
@@ -30,8 +32,14 @@ class RegisterParcelUseCase(
 ) {
     @Transactional
     fun register(actor: BackOfficeActor, command: RegisterParcel): Parcel {
-        val sellerId = actor.sellerId?.takeIf { actor.canManageSellerParcels }
-            ?: throw AccessDeniedException("User ${actor.userId} cannot register parcels")
+        val sellerId = when {
+            actor.isSupportAgent ->
+                command.sellerId ?: throw IllegalArgumentException("Support agents must provide a sellerId")
+            actor.canManageSellerParcels ->
+                command.sellerId ?: requireNotNull(actor.sellerId)
+            else ->
+                throw AccessDeniedException("User ${actor.userId} cannot register parcels")
+        }
         val carrier = carriers.findCarrier(command.carrierCode) ?: throw UnknownCarrierException(command.carrierCode)
         if (!carrier.isActive) {
             throw RetiredCarrierException(carrier.code)

@@ -8,18 +8,23 @@ import com.shoplane.parceltracking.domain.carrier.UnknownCarrierException
 import com.shoplane.parceltracking.domain.parcel.DuplicateTrackingNumberException
 import com.shoplane.parceltracking.domain.parcel.OrderReference
 import com.shoplane.parceltracking.domain.parcel.ParcelStatus
+import com.shoplane.parceltracking.domain.parcel.SellerId
 import com.shoplane.parceltracking.domain.parcel.TrackingNumber
 import com.shoplane.parceltracking.fixtures.COLISWAY
 import com.shoplane.parceltracking.fixtures.GARDEN_TOOLS_SELLER
 import com.shoplane.parceltracking.fixtures.InMemoryParcelRepository
+import com.shoplane.parceltracking.fixtures.LIGHTING_SELLER
 import com.shoplane.parceltracking.fixtures.PARCELWAVE
 import com.shoplane.parceltracking.fixtures.StubCarrierDirectory
 import com.shoplane.parceltracking.fixtures.aCarrier
 import com.shoplane.parceltracking.fixtures.aRegisteredParcel
 import com.shoplane.parceltracking.fixtures.aSellerAdmin
+import com.shoplane.parceltracking.fixtures.aSellerOperator
+import com.shoplane.parceltracking.fixtures.aSellerViewer
 import com.shoplane.parceltracking.fixtures.aSupportAgent
 import com.shoplane.parceltracking.fixtures.fixedClockAt
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 
@@ -38,6 +43,34 @@ class RegisterParcelUseCaseTest {
         assertThat(parcel.sellerId).isEqualTo(GARDEN_TOOLS_SELLER)
         assertThat(parcel.status).isEqualTo(ParcelStatus.REGISTERED)
         assertThat(parcels.saved).hasSize(1)
+    }
+
+    @Test
+    fun `a seller operator registers a parcel for its own shop when naming it`() {
+        val parcel = useCase.register(aSellerOperator(), command(sellerId = GARDEN_TOOLS_SELLER))
+
+        assertThat(parcel.sellerId).isEqualTo(GARDEN_TOOLS_SELLER)
+    }
+
+    @Test
+    fun `read-only seller users cannot register parcels`() {
+        assertThatThrownBy { useCase.register(aSellerViewer(), command()) }
+            .isInstanceOf(AccessDeniedException::class.java)
+        assertThat(parcels.saved).isEmpty()
+    }
+
+    @Test
+    fun `support agents register a parcel for the seller they name`() {
+        val parcel = useCase.register(aSupportAgent(), command(sellerId = LIGHTING_SELLER))
+
+        assertThat(parcel.sellerId).isEqualTo(LIGHTING_SELLER)
+        assertThat(parcels.saved.map { it.sellerId }).containsExactly(LIGHTING_SELLER)
+    }
+
+    @Test
+    fun `support agents must name the seller they register a parcel for`() {
+        assertThatIllegalArgumentException().isThrownBy { useCase.register(aSupportAgent(), command()) }
+        assertThat(parcels.saved).isEmpty()
     }
 
     @Test
@@ -60,17 +93,15 @@ class RegisterParcelUseCaseTest {
             .isInstanceOf(DuplicateTrackingNumberException::class.java)
     }
 
-    @Test
-    fun `support agents cannot register parcels on behalf of a seller`() {
-        assertThatThrownBy { useCase.register(aSupportAgent(), command()) }
-            .isInstanceOf(AccessDeniedException::class.java)
-    }
-
-    private fun command(trackingNumber: String = "CW4400112233FR", carrierCode: CarrierCode = COLISWAY) =
-        RegisterParcel(
-            trackingNumber = TrackingNumber.of(trackingNumber),
-            carrierCode = carrierCode,
-            orderReference = OrderReference("SO-2026-118734"),
-            deliveryInstructions = "Leave at the garden gate",
-        )
+    private fun command(
+        trackingNumber: String = "CW4400112233FR",
+        carrierCode: CarrierCode = COLISWAY,
+        sellerId: SellerId? = null,
+    ) = RegisterParcel(
+        trackingNumber = TrackingNumber.of(trackingNumber),
+        carrierCode = carrierCode,
+        orderReference = OrderReference("SO-2026-118734"),
+        deliveryInstructions = "Leave at the garden gate",
+        sellerId = sellerId,
+    )
 }
