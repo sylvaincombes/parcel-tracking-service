@@ -1,5 +1,6 @@
 package com.shoplane.parceltracking.presentation.backoffice
 
+import com.shoplane.parceltracking.application.ParcelListItem
 import com.shoplane.parceltracking.domain.parcel.Parcel
 import com.shoplane.parceltracking.domain.parcel.TrackingEvent
 import jakarta.validation.constraints.NotBlank
@@ -23,22 +24,26 @@ data class ParcelSummaryResponse(
     val parcelId: String,
     val trackingNumber: String,
     val carrierCode: String,
+    val carrierName: String?,
     val orderReference: String,
     val status: String,
     val late: Boolean,
     val registeredAt: Instant,
 ) {
     companion object {
-        fun from(parcel: Parcel) =
-            ParcelSummaryResponse(
+        fun from(item: ParcelListItem): ParcelSummaryResponse {
+            val parcel = item.parcel
+            return ParcelSummaryResponse(
                 parcelId = parcel.id.toString(),
                 trackingNumber = parcel.trackingNumber.value,
                 carrierCode = parcel.carrierCode.value,
+                carrierName = item.carrierName,
                 orderReference = parcel.orderReference.value,
                 status = parcel.status.name,
                 late = parcel.isLate,
                 registeredAt = parcel.registeredAt,
             )
+        }
     }
 }
 
