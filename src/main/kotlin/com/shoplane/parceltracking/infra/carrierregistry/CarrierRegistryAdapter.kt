@@ -21,6 +21,14 @@ class CarrierRegistryAdapter(
             null
         }
 
+    override fun findOperatingCarrier(code: CarrierCode): Carrier? {
+        val carrier = findCarrier(code) ?: return null
+        return when (carrier.status) {
+            CarrierStatus.ACTIVE -> carrier
+            CarrierStatus.RETIRED -> findCarrier(carrier.replacedBy!!)
+        }
+    }
+
     companion object {
         const val CARRIERS_CACHE = "carriers"
 

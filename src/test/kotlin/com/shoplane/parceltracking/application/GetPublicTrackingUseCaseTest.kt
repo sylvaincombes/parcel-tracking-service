@@ -1,11 +1,14 @@
 package com.shoplane.parceltracking.application
 
 import com.shoplane.parceltracking.domain.calendar.BusinessCalendar
+import com.shoplane.parceltracking.domain.carrier.CarrierCode
+import com.shoplane.parceltracking.domain.carrier.CarrierStatus
 import com.shoplane.parceltracking.domain.carrier.TransitDays
 import com.shoplane.parceltracking.domain.eta.EtaCalculator
 import com.shoplane.parceltracking.domain.parcel.ParcelNotFoundException
 import com.shoplane.parceltracking.domain.parcel.TrackingEventType
 import com.shoplane.parceltracking.domain.parcel.TrackingNumber
+import com.shoplane.parceltracking.fixtures.COLISWAY
 import com.shoplane.parceltracking.fixtures.InMemoryParcelRepository
 import com.shoplane.parceltracking.fixtures.PARCELWAVE
 import com.shoplane.parceltracking.fixtures.StubCarrierDirectory
@@ -32,6 +35,21 @@ class GetPublicTrackingUseCaseTest {
         assertThat(tracking.carrierName).isEqualTo("Colisway")
         assertThat(tracking.carrierTrackingLink).isEqualTo(URI.create("https://track.colisway.example/parcels/CW4400112233FR"))
         assertThat(tracking.estimate).isNotNull
+    }
+
+    @Test
+    fun `a parcel shipped with a retired carrier links to the carrier that took it over`() {
+        val parcel = aPickedUpParcel(trackingNumber = "SB2200456789FR", carrierCode = CarrierCode("swiftbox"))
+        val carriers = StubCarrierDirectory(
+            aCarrier(code = COLISWAY, displayName = "Colisway"),
+            aCarrier(code = CarrierCode("swiftbox"), displayName = "SwiftBox", status = CarrierStatus.RETIRED, replacedBy = COLISWAY),
+        )
+        val useCase = GetPublicTrackingUseCase(InMemoryParcelRepository(parcel), carriers, etaCalculator)
+
+        val tracking = useCase.track(TrackingNumber.of("SB2200456789FR"))
+
+        assertThat(tracking.carrierName).isEqualTo("Colisway")
+        assertThat(tracking.carrierTrackingLink).isEqualTo(URI.create("https://track.colisway.example/parcels/SB2200456789FR"))
     }
 
     @Test

@@ -46,6 +46,29 @@ class CarrierRegistryAdapterTest {
     }
 
     @Test
+    fun `an active carrier operates its own parcels`() {
+        every { client.getCarrier("colisway") } returns activeColisway()
+
+        assertThat(adapter.findOperatingCarrier(CarrierCode("colisway"))?.code).isEqualTo(CarrierCode("colisway"))
+    }
+
+    @Test
+    fun `the replacement carrier operates the parcels of a retired carrier`() {
+        every { client.getCarrier("parcelwave") } returns CarrierDto(
+            code = "parcelwave",
+            displayName = "ParcelWave",
+            trackingUrlTemplate = "https://parcelwave.example/t/{trackingNumber}",
+            transitDays = TransitDaysDto(2, 4),
+            status = CarrierStatusDto.RETIRED,
+            retiredOn = "2026-09-30",
+            replacedBy = "colisway",
+        )
+        every { client.getCarrier("colisway") } returns activeColisway()
+
+        assertThat(adapter.findOperatingCarrier(CarrierCode("parcelwave"))?.displayName).isEqualTo("Colisway")
+    }
+
+    @Test
     fun `a carrier unknown to the registry is absent`() {
         every { client.getCarrier("speedyship") } throws notFound()
 

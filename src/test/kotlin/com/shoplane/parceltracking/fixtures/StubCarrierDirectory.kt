@@ -8,4 +8,9 @@ class StubCarrierDirectory(vararg carriers: Carrier) : CarrierDirectory {
     private val carriersByCode = carriers.associateBy { it.code }
 
     override fun findCarrier(code: CarrierCode): Carrier? = carriersByCode[code]
+
+    override fun findOperatingCarrier(code: CarrierCode): Carrier? {
+        val carrier = findCarrier(code) ?: return null
+        return carrier.replacedBy?.let(::findCarrier) ?: carrier
+    }
 }

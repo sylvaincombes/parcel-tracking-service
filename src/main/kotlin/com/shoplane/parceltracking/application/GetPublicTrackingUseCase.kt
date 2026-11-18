@@ -29,7 +29,7 @@ class GetPublicTrackingUseCase(
     fun track(trackingNumber: TrackingNumber): PublicTracking {
         val parcel = parcels.findByTrackingNumber(trackingNumber)
             ?: throw ParcelNotFoundException(trackingNumber.value)
-        val carrier = carriers.findCarrier(parcel.carrierCode)
+        val carrier = carriers.findOperatingCarrier(parcel.carrierCode)
         return PublicTracking(
             parcel = parcel,
             carrierName = carrier?.displayName,
