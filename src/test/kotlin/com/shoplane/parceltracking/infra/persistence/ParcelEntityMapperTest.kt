@@ -34,4 +34,16 @@ class ParcelEntityMapperTest {
         assertThat(entity.events.map { it.type }).containsExactly(TrackingEventType.PICKED_UP, TrackingEventType.IN_TRANSIT)
         assertThat(entity.status).isEqualTo(ParcelStatus.IN_TRANSIT)
     }
+
+    @Test
+    fun `the seller note is stored with a new parcel and with later changes`() {
+        val parcel = aPickedUpParcel().apply { changeSellerNote("Customer asked for a call before delivery") }
+        val entity = ParcelEntityMapper.toNewEntity(parcel, now)
+        assertThat(entity.sellerNote).isEqualTo("Customer asked for a call before delivery")
+        parcel.changeSellerNote("Glass lamp shade, customer was promised Thursday")
+
+        ParcelEntityMapper.applyChanges(entity, parcel, now)
+
+        assertThat(ParcelEntityMapper.toDomain(entity).sellerNote).isEqualTo("Glass lamp shade, customer was promised Thursday")
+    }
 }

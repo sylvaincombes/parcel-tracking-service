@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2026-11-18-add-parcel-seller-note
+      author: priya.raman
+      changes:
+        - addColumn:
+            tableName: parcel
+            columns:
+              - column:
+                  name: seller_note
+                  type: varchar(255)
+      rollback:
+        - dropColumn:
+            tableName: parcel
+            columnName: seller_note

@@ -59,6 +59,7 @@ class InMemoryParcelRepository(vararg initial: Parcel) : ParcelRepository {
             registeredAt = parcel.registeredAt,
             status = parcel.status,
             deliveryInstructions = parcel.deliveryInstructions,
+            sellerNote = parcel.sellerNote,
             events = parcel.events,
             pickedUpOn = parcel.pickedUpOn,
             deliveredAt = parcel.deliveredAt,

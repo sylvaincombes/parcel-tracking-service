@@ -4,6 +4,7 @@ import com.shoplane.parceltracking.application.BackOfficeParcelQueries
 import com.shoplane.parceltracking.application.CancelParcelUseCase
 import com.shoplane.parceltracking.application.RegisterParcel
 import com.shoplane.parceltracking.application.RegisterParcelUseCase
+import com.shoplane.parceltracking.application.UpdateSellerNoteUseCase
 import com.shoplane.parceltracking.application.access.BackOfficeActor
 import com.shoplane.parceltracking.domain.carrier.CarrierCode
 import com.shoplane.parceltracking.domain.parcel.OrderReference
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -29,6 +31,7 @@ class BackOfficeParcelController(
     private val queries: BackOfficeParcelQueries,
     private val registerParcel: RegisterParcelUseCase,
     private val cancelParcel: CancelParcelUseCase,
+    private val updateSellerNote: UpdateSellerNoteUseCase,
 ) {
     @GetMapping
     fun list(
@@ -58,4 +61,12 @@ class BackOfficeParcelController(
     @PostMapping("/{parcelId}/cancel")
     fun cancel(actor: BackOfficeActor, @PathVariable parcelId: UUID): ParcelDetailResponse =
         ParcelDetailResponse.from(cancelParcel.cancel(actor, ParcelId(parcelId)))
+
+    @PutMapping("/{parcelId}/seller-note")
+    fun updateSellerNote(
+        actor: BackOfficeActor,
+        @PathVariable parcelId: UUID,
+        @Valid @RequestBody request: UpdateSellerNoteRequest,
+    ): ParcelDetailResponse =
+        ParcelDetailResponse.from(updateSellerNote.update(actor, ParcelId(parcelId), request.note))
 }

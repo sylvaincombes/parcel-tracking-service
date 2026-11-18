@@ -15,6 +15,7 @@ class Parcel(
     val registeredAt: Instant,
     status: ParcelStatus = ParcelStatus.REGISTERED,
     deliveryInstructions: String? = null,
+    sellerNote: String? = null,
     events: List<TrackingEvent> = emptyList(),
     pickedUpOn: LocalDate? = null,
     deliveredAt: Instant? = null,
@@ -25,6 +26,9 @@ class Parcel(
         private set
 
     var deliveryInstructions: String? = deliveryInstructions
+        private set
+
+    var sellerNote: String? = sellerNote
         private set
 
     var pickedUpOn: LocalDate? = pickedUpOn
@@ -66,6 +70,10 @@ class Parcel(
             throw IllegalStatusTransitionException(id, status, ParcelStatus.CANCELLED)
         }
         return requireNotNull(moveTo(ParcelStatus.CANCELLED, now))
+    }
+
+    fun changeSellerNote(note: String?) {
+        sellerNote = note?.trim()?.takeIf { it.isNotEmpty() }
     }
 
     fun markLate(now: Instant) {

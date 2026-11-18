@@ -34,3 +34,8 @@ routes:
     methods: [POST]
     path: ^/back-office/v1/parcels/[^/]+/cancel$
     auth: backoffice-session
+
+  - id: backoffice-parcel-seller-note
+    methods: [PUT]
+    path: ^/back-office/v1/parcels/[^/]+/seller-note$
+    auth: backoffice-session

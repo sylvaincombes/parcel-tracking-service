@@ -20,6 +20,7 @@ object ParcelEntityMapper {
             registeredAt = entity.registeredAt,
             status = entity.status,
             deliveryInstructions = entity.deliveryInstructions,
+            sellerNote = entity.sellerNote,
             events = entity.events.map(::toDomainEvent),
             pickedUpOn = entity.pickedUpOn,
             deliveredAt = entity.deliveredAt,
@@ -36,6 +37,7 @@ object ParcelEntityMapper {
             orderReference = parcel.orderReference.value,
             status = parcel.status,
             deliveryInstructions = parcel.deliveryInstructions,
+            sellerNote = parcel.sellerNote,
             pickedUpOn = parcel.pickedUpOn,
             deliveredAt = parcel.deliveredAt,
             lateDetectedAt = parcel.lateDetectedAt,
@@ -46,6 +48,7 @@ object ParcelEntityMapper {
     fun applyChanges(entity: ParcelEntity, parcel: Parcel, now: Instant) {
         entity.status = parcel.status
         entity.deliveryInstructions = parcel.deliveryInstructions
+        entity.sellerNote = parcel.sellerNote
         entity.pickedUpOn = parcel.pickedUpOn
         entity.deliveredAt = parcel.deliveredAt
         entity.lateDetectedAt = parcel.lateDetectedAt

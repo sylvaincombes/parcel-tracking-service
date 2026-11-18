@@ -33,6 +33,8 @@ class ParcelEntity(
     var status: ParcelStatus,
     @Column(name = "delivery_instructions")
     var deliveryInstructions: String?,
+    @Column(name = "seller_note")
+    var sellerNote: String?,
     @Column(name = "picked_up_on")
     var pickedUpOn: LocalDate?,
     @Column(name = "delivered_at")

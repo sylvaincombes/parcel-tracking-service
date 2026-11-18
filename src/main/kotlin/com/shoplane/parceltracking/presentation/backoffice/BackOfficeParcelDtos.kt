@@ -19,6 +19,11 @@ data class RegisterParcelRequest(
     val deliveryInstructions: String? = null,
 )
 
+data class UpdateSellerNoteRequest(
+    @field:Size(max = 1000)
+    val note: String?,
+)
+
 data class ParcelSummaryResponse(
     val parcelId: String,
     val trackingNumber: String,
@@ -50,6 +55,7 @@ data class ParcelDetailResponse(
     val orderReference: String,
     val status: String,
     val deliveryInstructions: String?,
+    val sellerNote: String?,
     val pickedUpOn: LocalDate?,
     val deliveredAt: Instant?,
     val lateDetectedAt: Instant?,
@@ -66,6 +72,7 @@ data class ParcelDetailResponse(
                 orderReference = parcel.orderReference.value,
                 status = parcel.status.name,
                 deliveryInstructions = parcel.deliveryInstructions,
+                sellerNote = parcel.sellerNote,
                 pickedUpOn = parcel.pickedUpOn,
                 deliveredAt = parcel.deliveredAt,
                 lateDetectedAt = parcel.lateDetectedAt,
