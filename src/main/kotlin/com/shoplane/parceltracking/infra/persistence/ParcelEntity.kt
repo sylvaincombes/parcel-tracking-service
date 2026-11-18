@@ -39,6 +39,8 @@ class ParcelEntity(
     var deliveredAt: Instant?,
     @Column(name = "late_detected_at")
     var lateDetectedAt: Instant?,
+    @Column(name = "return_reason")
+    var returnReason: String?,
     @Column(name = "registered_at", nullable = false, updatable = false)
     val registeredAt: Instant,
     @Column(name = "updated_at", nullable = false)

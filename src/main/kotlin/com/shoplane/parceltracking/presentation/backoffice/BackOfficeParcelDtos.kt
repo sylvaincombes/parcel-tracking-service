@@ -53,6 +53,7 @@ data class ParcelDetailResponse(
     val pickedUpOn: LocalDate?,
     val deliveredAt: Instant?,
     val lateDetectedAt: Instant?,
+    val returnReason: String?,
     val registeredAt: Instant,
     val events: List<ParcelEventResponse>,
 ) {
@@ -69,6 +70,7 @@ data class ParcelDetailResponse(
                 pickedUpOn = parcel.pickedUpOn,
                 deliveredAt = parcel.deliveredAt,
                 lateDetectedAt = parcel.lateDetectedAt,
+                returnReason = parcel.returnReason,
                 registeredAt = parcel.registeredAt,
                 events = parcel.timeline().map(ParcelEventResponse::from),
             )

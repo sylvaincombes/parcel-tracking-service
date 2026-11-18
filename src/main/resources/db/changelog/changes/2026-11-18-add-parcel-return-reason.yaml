@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2026-11-18-add-parcel-return-reason
+      author: tomas.ortega
+      changes:
+        - addColumn:
+            tableName: parcel
+            columns:
+              - column:
+                  name: return_reason
+                  type: text
+      rollback:
+        - dropColumn:
+            tableName: parcel
+            columnName: return_reason

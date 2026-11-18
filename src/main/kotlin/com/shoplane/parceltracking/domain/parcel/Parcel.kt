@@ -19,6 +19,7 @@ class Parcel(
     pickedUpOn: LocalDate? = null,
     deliveredAt: Instant? = null,
     lateDetectedAt: Instant? = null,
+    returnReason: String? = null,
     val version: Long? = null,
 ) {
     var status: ParcelStatus = status
@@ -34,6 +35,9 @@ class Parcel(
         private set
 
     var lateDetectedAt: Instant? = lateDetectedAt
+        private set
+
+    var returnReason: String? = returnReason
         private set
 
     private val recordedEvents: MutableList<TrackingEvent> = events.toMutableList()
@@ -66,6 +70,11 @@ class Parcel(
             throw IllegalStatusTransitionException(id, status, ParcelStatus.CANCELLED)
         }
         return requireNotNull(moveTo(ParcelStatus.CANCELLED, now))
+    }
+
+    fun recordReturnReason(carrierMessage: String?) {
+        check(status == ParcelStatus.RETURNED_TO_SENDER) { "Parcel $id has not been returned to the seller" }
+        returnReason = carrierMessage?.trim()?.takeIf { it.isNotEmpty() }
     }
 
     fun markLate(now: Instant) {

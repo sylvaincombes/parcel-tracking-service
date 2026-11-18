@@ -24,6 +24,20 @@ class ParcelEntityMapperTest {
     }
 
     @Test
+    fun `a returned parcel keeps its return reason through its entity`() {
+        val parcel = aPickedUpParcel().apply {
+            record(event(TrackingEventType.IN_TRANSIT, "2026-11-03T02:00:00Z"), now)
+            record(event(TrackingEventType.RETURNED_TO_SENDER, "2026-11-04T09:30:00Z"), now)
+            recordReturnReason("Address unknown, returning to sender")
+        }
+
+        val restored = ParcelEntityMapper.toDomain(ParcelEntityMapper.toNewEntity(parcel, now))
+
+        assertThat(restored.status).isEqualTo(ParcelStatus.RETURNED_TO_SENDER)
+        assertThat(restored.returnReason).isEqualTo("Address unknown, returning to sender")
+    }
+
+    @Test
     fun `applying changes only appends events not yet persisted`() {
         val parcel = aPickedUpParcel()
         val entity = ParcelEntityMapper.toNewEntity(parcel, now)

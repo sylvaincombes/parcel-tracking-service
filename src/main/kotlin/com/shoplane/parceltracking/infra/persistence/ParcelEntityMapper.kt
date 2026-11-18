@@ -24,6 +24,7 @@ object ParcelEntityMapper {
             pickedUpOn = entity.pickedUpOn,
             deliveredAt = entity.deliveredAt,
             lateDetectedAt = entity.lateDetectedAt,
+            returnReason = entity.returnReason,
             version = entity.version,
         )
 
@@ -39,6 +40,7 @@ object ParcelEntityMapper {
             pickedUpOn = parcel.pickedUpOn,
             deliveredAt = parcel.deliveredAt,
             lateDetectedAt = parcel.lateDetectedAt,
+            returnReason = parcel.returnReason,
             registeredAt = parcel.registeredAt,
             updatedAt = now,
         ).also { appendNewEvents(it, parcel, now) }

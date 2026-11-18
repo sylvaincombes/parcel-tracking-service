@@ -64,6 +64,15 @@ class RecordTrackingEventUseCaseTest {
     }
 
     @Test
+    fun `keeps the carrier's reason when the parcel is returned to the seller`() {
+        useCase.record(command(TrackingEventType.IN_TRANSIT))
+
+        useCase.record(command(TrackingEventType.RETURNED_TO_SENDER, message = "Address unknown, returning to sender"))
+
+        assertThat(parcels.findById(parcel.id)?.returnReason).isEqualTo("Address unknown, returning to sender")
+    }
+
+    @Test
     fun `ignores events sent by another carrier for the same tracking number`() {
         assertThatThrownBy { useCase.record(command(TrackingEventType.OUT_FOR_DELIVERY).copy(carrierCode = PARCELWAVE)) }
             .isInstanceOf(ParcelNotFoundException::class.java)

@@ -43,6 +43,9 @@ class RecordTrackingEventUseCase(
             attemptReason = attemptReasonOf(command),
         )
         val statusChange = parcel.record(event, clock.instant())
+        if (command.type == TrackingEventType.RETURNED_TO_SENDER) {
+            parcel.recordReturnReason(command.carrierMessage)
+        }
         parcels.save(parcel)
         statusChange?.let(publisher::publish)
         return if (statusChange != null) RecordingOutcome.STATUS_CHANGED else RecordingOutcome.RECORDED_WITHOUT_STATUS_CHANGE
