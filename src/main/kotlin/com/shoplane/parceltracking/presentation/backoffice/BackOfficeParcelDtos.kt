@@ -52,12 +52,13 @@ data class ParcelDetailResponse(
     val deliveryInstructions: String?,
     val pickedUpOn: LocalDate?,
     val deliveredAt: Instant?,
+    val transitBusinessDays: Int?,
     val lateDetectedAt: Instant?,
     val registeredAt: Instant,
     val events: List<ParcelEventResponse>,
 ) {
     companion object {
-        fun from(parcel: Parcel) =
+        fun from(parcel: Parcel, transitBusinessDays: Int? = null) =
             ParcelDetailResponse(
                 parcelId = parcel.id.toString(),
                 trackingNumber = parcel.trackingNumber.value,
@@ -68,6 +69,7 @@ data class ParcelDetailResponse(
                 deliveryInstructions = parcel.deliveryInstructions,
                 pickedUpOn = parcel.pickedUpOn,
                 deliveredAt = parcel.deliveredAt,
+                transitBusinessDays = transitBusinessDays,
                 lateDetectedAt = parcel.lateDetectedAt,
                 registeredAt = parcel.registeredAt,
                 events = parcel.timeline().map(ParcelEventResponse::from),

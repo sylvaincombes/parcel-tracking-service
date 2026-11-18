@@ -19,6 +19,18 @@ class BusinessCalendar(private val publicHolidays: Set<LocalDate>) {
         return date
     }
 
+    fun businessDaysBetween(start: LocalDate, end: LocalDate): Int {
+        var date = start
+        var businessDays = 0
+        while (date.isBefore(end)) {
+            date = date.plusDays(1)
+            if (isBusinessDay(date)) {
+                businessDays++
+            }
+        }
+        return businessDays
+    }
+
     private companion object {
         val WEEKEND = setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)
     }

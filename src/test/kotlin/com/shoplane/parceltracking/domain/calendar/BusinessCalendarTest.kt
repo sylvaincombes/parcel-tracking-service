@@ -44,6 +44,21 @@ class BusinessCalendarTest {
     }
 
     @Test
+    fun `counts the business days after the start date up to the end date`() {
+        assertThat(calendar.businessDaysBetween(LocalDate.parse("2026-11-16"), LocalDate.parse("2026-11-18"))).isEqualTo(2)
+    }
+
+    @Test
+    fun `counting business days between two dates skips weekends and public holidays`() {
+        assertThat(calendar.businessDaysBetween(LocalDate.parse("2026-11-10"), LocalDate.parse("2026-11-16"))).isEqualTo(3)
+    }
+
+    @Test
+    fun `there are no business days between a date and itself`() {
+        assertThat(calendar.businessDaysBetween(LocalDate.parse("2026-11-16"), LocalDate.parse("2026-11-16"))).isZero()
+    }
+
+    @Test
     fun `rejects a negative number of business days`() {
         assertThatIllegalArgumentException().isThrownBy { calendar.addBusinessDays(LocalDate.parse("2026-11-16"), -1) }
     }

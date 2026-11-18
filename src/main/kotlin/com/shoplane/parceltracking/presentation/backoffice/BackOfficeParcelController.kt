@@ -41,7 +41,7 @@ class BackOfficeParcelController(
 
     @GetMapping("/{parcelId}")
     fun detail(actor: BackOfficeActor, @PathVariable parcelId: UUID): ParcelDetailResponse =
-        ParcelDetailResponse.from(queries.detail(actor, ParcelId(parcelId)))
+        queries.detail(actor, ParcelId(parcelId)).let { ParcelDetailResponse.from(it.parcel, it.transitBusinessDays) }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
