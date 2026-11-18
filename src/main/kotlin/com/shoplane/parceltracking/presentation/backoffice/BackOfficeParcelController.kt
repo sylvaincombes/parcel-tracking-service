@@ -4,6 +4,7 @@ import com.shoplane.parceltracking.application.BackOfficeParcelQueries
 import com.shoplane.parceltracking.application.CancelParcelUseCase
 import com.shoplane.parceltracking.application.RegisterParcel
 import com.shoplane.parceltracking.application.RegisterParcelUseCase
+import com.shoplane.parceltracking.application.ResendLateNoticeUseCase
 import com.shoplane.parceltracking.application.access.BackOfficeActor
 import com.shoplane.parceltracking.domain.carrier.CarrierCode
 import com.shoplane.parceltracking.domain.parcel.OrderReference
@@ -29,6 +30,7 @@ class BackOfficeParcelController(
     private val queries: BackOfficeParcelQueries,
     private val registerParcel: RegisterParcelUseCase,
     private val cancelParcel: CancelParcelUseCase,
+    private val resendLateNotice: ResendLateNoticeUseCase,
 ) {
     @GetMapping
     fun list(
@@ -58,4 +60,10 @@ class BackOfficeParcelController(
     @PostMapping("/{parcelId}/cancel")
     fun cancel(actor: BackOfficeActor, @PathVariable parcelId: UUID): ParcelDetailResponse =
         ParcelDetailResponse.from(cancelParcel.cancel(actor, ParcelId(parcelId)))
+
+    @PostMapping("/{parcelId}/resend-late-notice")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    fun resendLateNotice(actor: BackOfficeActor, @PathVariable parcelId: UUID) {
+        resendLateNotice.resend(actor, ParcelId(parcelId))
+    }
 }

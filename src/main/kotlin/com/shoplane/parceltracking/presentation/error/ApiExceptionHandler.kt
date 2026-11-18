@@ -6,6 +6,7 @@ import com.shoplane.parceltracking.domain.carrier.UnknownCarrierException
 import com.shoplane.parceltracking.domain.parcel.DuplicateTrackingNumberException
 import com.shoplane.parceltracking.domain.parcel.IllegalStatusTransitionException
 import com.shoplane.parceltracking.domain.parcel.ParcelNotFoundException
+import com.shoplane.parceltracking.domain.parcel.ParcelNotLateException
 import com.shoplane.parceltracking.presentation.backoffice.MissingBackOfficeIdentityException
 import com.shoplane.parceltracking.presentation.webhook.InvalidWebhookSignatureException
 import org.springframework.dao.OptimisticLockingFailureException
@@ -37,6 +38,9 @@ class ApiExceptionHandler {
     @ExceptionHandler(DuplicateTrackingNumberException::class)
     fun duplicate(exception: DuplicateTrackingNumberException) =
         error(HttpStatus.CONFLICT, "duplicate_tracking_number", exception)
+
+    @ExceptionHandler(ParcelNotLateException::class)
+    fun notLate(exception: ParcelNotLateException) = error(HttpStatus.CONFLICT, "parcel_not_late", exception)
 
     @ExceptionHandler(OptimisticLockingFailureException::class)
     fun concurrentUpdate(exception: OptimisticLockingFailureException) =

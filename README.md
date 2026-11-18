@@ -39,6 +39,7 @@ Unit tests only, no Docker needed. Use cases are tested with the in-memory fakes
 | `POST` | `/back-office/v1/parcels` | sellers |
 | `GET` | `/back-office/v1/parcels/{parcelId}` | sellers, support agents |
 | `POST` | `/back-office/v1/parcels/{parcelId}/cancel` | sellers, support agents |
+| `POST` | `/back-office/v1/parcels/{parcelId}/resend-late-notice` | support agents |
 
 Gateway routes for these paths are declared in `deploy/gateway/routes.yaml`.
 
