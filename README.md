@@ -37,6 +37,7 @@ Unit tests only, no Docker needed. Use cases are tested with the in-memory fakes
 | `POST` | `/webhooks/v1/carriers/{carrierCode}/events` | carriers (HMAC signature in `X-Carrier-Signature`) |
 | `GET` | `/back-office/v1/parcels` | sellers, support agents |
 | `POST` | `/back-office/v1/parcels` | sellers |
+| `GET` | `/back-office/v1/parcels/with-carrier-count` | sellers, support agents |
 | `GET` | `/back-office/v1/parcels/{parcelId}` | sellers, support agents |
 | `POST` | `/back-office/v1/parcels/{parcelId}/cancel` | sellers, support agents |
 

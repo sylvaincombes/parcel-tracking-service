@@ -42,6 +42,10 @@ data class ParcelSummaryResponse(
     }
 }
 
+data class WithCarrierCountResponse(
+    val withCarrier: Long,
+)
+
 data class ParcelDetailResponse(
     val parcelId: String,
     val trackingNumber: String,

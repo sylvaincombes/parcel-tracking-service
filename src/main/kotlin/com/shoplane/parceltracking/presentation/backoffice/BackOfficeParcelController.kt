@@ -2,6 +2,7 @@ package com.shoplane.parceltracking.presentation.backoffice
 
 import com.shoplane.parceltracking.application.BackOfficeParcelQueries
 import com.shoplane.parceltracking.application.CancelParcelUseCase
+import com.shoplane.parceltracking.application.CountParcelsWithCarrierUseCase
 import com.shoplane.parceltracking.application.RegisterParcel
 import com.shoplane.parceltracking.application.RegisterParcelUseCase
 import com.shoplane.parceltracking.application.access.BackOfficeActor
@@ -29,6 +30,7 @@ class BackOfficeParcelController(
     private val queries: BackOfficeParcelQueries,
     private val registerParcel: RegisterParcelUseCase,
     private val cancelParcel: CancelParcelUseCase,
+    private val countParcelsWithCarrier: CountParcelsWithCarrierUseCase,
 ) {
     @GetMapping
     fun list(
@@ -38,6 +40,13 @@ class BackOfficeParcelController(
         @RequestParam(defaultValue = "50") size: Int,
     ): List<ParcelSummaryResponse> =
         queries.list(actor, sellerId?.let(::SellerId), PageRequest(page, size)).map(ParcelSummaryResponse::from)
+
+    @GetMapping("/with-carrier-count")
+    fun withCarrierCount(
+        actor: BackOfficeActor,
+        @RequestParam(required = false) sellerId: Long?,
+    ): WithCarrierCountResponse =
+        WithCarrierCountResponse(countParcelsWithCarrier.count(actor, sellerId?.let(::SellerId)))
 
     @GetMapping("/{parcelId}")
     fun detail(actor: BackOfficeActor, @PathVariable parcelId: UUID): ParcelDetailResponse =
