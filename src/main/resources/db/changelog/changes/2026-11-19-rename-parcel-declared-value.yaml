@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2026-11-19-rename-parcel-declared-value
+      author: tomas.ortega
+      changes:
+        - renameColumn:
+            tableName: parcel
+            oldColumnName: declared_value_cents
+            newColumnName: insured_value_cents
+            columnDataType: bigint
+      rollback:
+        - renameColumn:
+            tableName: parcel
+            oldColumnName: insured_value_cents
+            newColumnName: declared_value_cents
+            columnDataType: bigint

@@ -25,12 +25,12 @@ class ParcelEntityMapperTest {
     }
 
     @Test
-    fun `the declared value survives a round trip through its entity`() {
-        val parcel = aRegisteredParcel(declaredValueCents = 12_990)
+    fun `the insured value survives a round trip through its entity`() {
+        val parcel = aRegisteredParcel(insuredValueCents = 12_990)
 
         val restored = ParcelEntityMapper.toDomain(ParcelEntityMapper.toNewEntity(parcel, now))
 
-        assertThat(restored.declaredValueCents).isEqualTo(12_990)
+        assertThat(restored.insuredValueCents).isEqualTo(12_990)
     }
 
     @Test

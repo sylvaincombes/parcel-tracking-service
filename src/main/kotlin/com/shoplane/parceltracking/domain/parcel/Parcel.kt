@@ -15,7 +15,7 @@ class Parcel(
     val registeredAt: Instant,
     status: ParcelStatus = ParcelStatus.REGISTERED,
     deliveryInstructions: String? = null,
-    val declaredValueCents: Long? = null,
+    val insuredValueCents: Long? = null,
     events: List<TrackingEvent> = emptyList(),
     pickedUpOn: LocalDate? = null,
     deliveredAt: Instant? = null,
@@ -99,7 +99,7 @@ class Parcel(
             sellerId: SellerId,
             orderReference: OrderReference,
             deliveryInstructions: String?,
-            declaredValueCents: Long? = null,
+            insuredValueCents: Long? = null,
             now: Instant,
         ): Parcel =
             Parcel(
@@ -110,7 +110,7 @@ class Parcel(
                 orderReference = orderReference,
                 registeredAt = now,
                 deliveryInstructions = deliveryInstructions?.trim()?.takeIf { it.isNotEmpty() },
-                declaredValueCents = declaredValueCents,
+                insuredValueCents = insuredValueCents,
             )
     }
 }

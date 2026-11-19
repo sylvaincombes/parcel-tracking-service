@@ -19,7 +19,7 @@ data class RegisterParcelRequest(
     @field:Size(max = 500)
     val deliveryInstructions: String? = null,
     @field:PositiveOrZero
-    val declaredValueCents: Long? = null,
+    val insuredValueCents: Long? = null,
 )
 
 data class ParcelSummaryResponse(
@@ -53,7 +53,7 @@ data class ParcelDetailResponse(
     val orderReference: String,
     val status: String,
     val deliveryInstructions: String?,
-    val declaredValueCents: Long?,
+    val insuredValueCents: Long?,
     val pickedUpOn: LocalDate?,
     val deliveredAt: Instant?,
     val lateDetectedAt: Instant?,
@@ -70,7 +70,7 @@ data class ParcelDetailResponse(
                 orderReference = parcel.orderReference.value,
                 status = parcel.status.name,
                 deliveryInstructions = parcel.deliveryInstructions,
-                declaredValueCents = parcel.declaredValueCents,
+                insuredValueCents = parcel.insuredValueCents,
                 pickedUpOn = parcel.pickedUpOn,
                 deliveredAt = parcel.deliveredAt,
                 lateDetectedAt = parcel.lateDetectedAt,

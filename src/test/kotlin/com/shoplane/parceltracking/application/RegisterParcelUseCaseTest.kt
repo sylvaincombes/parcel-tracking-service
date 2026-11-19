@@ -41,18 +41,18 @@ class RegisterParcelUseCaseTest {
     }
 
     @Test
-    fun `keeps the declared value given at registration`() {
-        val parcel = useCase.register(aSellerAdmin(), command(declaredValueCents = 12_990))
+    fun `keeps the insured value given at registration`() {
+        val parcel = useCase.register(aSellerAdmin(), command(insuredValueCents = 12_990))
 
-        assertThat(parcel.declaredValueCents).isEqualTo(12_990)
-        assertThat(parcels.findById(parcel.id)?.declaredValueCents).isEqualTo(12_990)
+        assertThat(parcel.insuredValueCents).isEqualTo(12_990)
+        assertThat(parcels.findById(parcel.id)?.insuredValueCents).isEqualTo(12_990)
     }
 
     @Test
-    fun `a parcel registered without a declared value has none`() {
+    fun `a parcel registered without an insured value has none`() {
         val parcel = useCase.register(aSellerAdmin(), command())
 
-        assertThat(parcel.declaredValueCents).isNull()
+        assertThat(parcel.insuredValueCents).isNull()
     }
 
     @Test
@@ -84,13 +84,13 @@ class RegisterParcelUseCaseTest {
     private fun command(
         trackingNumber: String = "CW4400112233FR",
         carrierCode: CarrierCode = COLISWAY,
-        declaredValueCents: Long? = null,
+        insuredValueCents: Long? = null,
     ) =
         RegisterParcel(
             trackingNumber = TrackingNumber.of(trackingNumber),
             carrierCode = carrierCode,
             orderReference = OrderReference("SO-2026-118734"),
             deliveryInstructions = "Leave at the garden gate",
-            declaredValueCents = declaredValueCents,
+            insuredValueCents = insuredValueCents,
         )
 }
