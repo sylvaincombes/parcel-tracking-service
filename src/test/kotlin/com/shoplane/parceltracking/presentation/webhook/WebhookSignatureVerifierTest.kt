@@ -16,6 +16,21 @@ class WebhookSignatureVerifierTest {
     }
 
     @Test
+    fun `accepts a signature truncated to its first 32 hex characters`() {
+        val signature = WebhookSignatureVerifier.sign("colisway-webhook-secret", body).take(32)
+
+        assertThatCode { verifier.verify("colisway", body, signature) }.doesNotThrowAnyException()
+    }
+
+    @Test
+    fun `rejects a truncated signature of another body`() {
+        val signature = WebhookSignatureVerifier.sign("colisway-webhook-secret", body.replace("DLV", "RTS")).take(32)
+
+        assertThatThrownBy { verifier.verify("colisway", body, signature) }
+            .isInstanceOf(InvalidWebhookSignatureException::class.java)
+    }
+
+    @Test
     fun `rejects a tampered body`() {
         val signature = WebhookSignatureVerifier.sign("colisway-webhook-secret", body)
 

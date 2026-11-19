@@ -4,7 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Component
 import java.nio.charset.StandardCharsets
-import java.security.MessageDigest
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
@@ -30,10 +29,7 @@ class WebhookSignatureVerifier(
 
     private fun matches(secret: String, body: String, signature: String): Boolean {
         val expected = sign(secret, body)
-        return MessageDigest.isEqual(
-            expected.toByteArray(StandardCharsets.US_ASCII),
-            signature.lowercase().toByteArray(StandardCharsets.US_ASCII),
-        )
+        return expected.startsWith(signature.lowercase())
     }
 
     companion object {
