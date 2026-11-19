@@ -58,4 +58,5 @@ TypeScript, no runtime dependencies, tests with the Node test runner (Node 24 or
 - `AGENTS.md`: conventions for anyone (human or tool) changing this repository.
 - `docs/adr/`: architecture decisions.
 - `docs/database-migrations.md`: how to write Liquibase changesets for our large tables.
+- `docs/late-parcel-detection.md`: when a parcel is reported late, what happens next and how to turn detection off.
 - `contracts/`: upstream API contracts and the payloads we publish.
