@@ -34,7 +34,16 @@ class DetectLateParcelsUseCase(
     }
 
     private fun flagIfLate(parcel: Parcel, today: LocalDate): Boolean {
-        val carrier = carriers.findCarrier(parcel.carrierCode) ?: return false
+        val pickedUpOn = requireNotNull(parcel.pickedUpOn)
+        val carrier = carriers.findCarrier(parcel.carrierCode)
+        if (carrier == null) {
+            logger.warn(
+                "Cannot check lateness of parcel {}: carrier {} is missing from the registry",
+                parcel.id,
+                parcel.carrierCode,
+            )
+            return false
+        }
         if (!detector.isLate(parcel, carrier, today)) {
             return false
         }
@@ -45,7 +54,7 @@ class DetectLateParcelsUseCase(
                 parcelId = parcel.id,
                 trackingNumber = parcel.trackingNumber,
                 sellerId = parcel.sellerId,
-                deliveryDeadline = detector.deliveryDeadline(requireNotNull(parcel.pickedUpOn), carrier),
+                deliveryDeadline = detector.deliveryDeadline(pickedUpOn, carrier),
                 occurredAt = clock.instant(),
             ),
         )

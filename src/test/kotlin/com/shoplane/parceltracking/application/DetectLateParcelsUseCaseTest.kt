@@ -5,6 +5,7 @@ import com.shoplane.parceltracking.domain.carrier.TransitDays
 import com.shoplane.parceltracking.domain.event.ParcelLateDetected
 import com.shoplane.parceltracking.domain.lateness.LateParcelDetector
 import com.shoplane.parceltracking.fixtures.InMemoryParcelRepository
+import com.shoplane.parceltracking.fixtures.PARCELWAVE
 import com.shoplane.parceltracking.fixtures.RecordingParcelEventPublisher
 import com.shoplane.parceltracking.fixtures.StubCarrierDirectory
 import com.shoplane.parceltracking.fixtures.aCarrier
@@ -57,5 +58,29 @@ class DetectLateParcelsUseCaseTest {
 
         assertThat(useCase.detect()).isZero()
         assertThat(publisher.published).isEmpty()
+    }
+
+    @Test
+    fun `a parcel whose carrier is missing from the registry is skipped without stopping the run`() {
+        val stuckWithMissingCarrier = aPickedUpParcel(
+            trackingNumber = "PW7781200456FR",
+            carrierCode = PARCELWAVE,
+            pickedUpAt = "2026-11-02T14:00:00Z",
+        )
+        val parcels = InMemoryParcelRepository(stuckWithMissingCarrier, stuckParcel)
+        val useCase = DetectLateParcelsUseCase(
+            parcels = parcels,
+            carriers = StubCarrierDirectory(aCarrier(transitDays = TransitDays(min = 1, max = 2))),
+            detector = LateParcelDetector(BusinessCalendar(emptySet()), graceBusinessDays = 1),
+            publisher = publisher,
+            transactionTemplate = transactionTemplate,
+            clock = fixedClockAt("2026-11-19T15:00:00Z"),
+        )
+
+        val flagged = useCase.detect(batchSize = 1)
+
+        assertThat(flagged).isEqualTo(1)
+        assertThat(parcels.findById(stuckWithMissingCarrier.id)?.isLate).isFalse()
+        assertThat(parcels.findById(stuckParcel.id)?.isLate).isTrue()
     }
 }
